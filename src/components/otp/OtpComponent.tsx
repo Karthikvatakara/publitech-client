@@ -1,33 +1,31 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { signupUser } from '../../redux/actions/user/userActions';
 import toast from 'react-hot-toast';
+import { ClipLoader } from 'react-spinners';
 
 interface TempData {
     username: string;
     email: string;
     password: string;
-    otp?:string
-    
+    otp?: string;
 }
-
 
 function OtpComponent({ userData }: { userData: TempData }) {
     const dispatch = useDispatch<AppState>();
     const navigate = useNavigate();
 
-    const [loading,setLoading] = useState<boolean>(false)
-    const [errors,setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [errors, setError] = useState<string>("");
     const [otp1, setOtp1] = useState<string>("");
     const [otp2, setOtp2] = useState<string>("");
     const [otp3, setOtp3] = useState<string>("");
     const [otp4, setOtp4] = useState<string>("");
-    const [countdown, setCountdown] = useState<number>(60)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [countdown, setCountdown] = useState<number>(120);
     const [focusedInput, setFocusedInput] = useState<number>(0);
-    const [showResend, setShowResend] = useState<boolean>(true);
+    const [showResend, setShowResend] = useState<boolean>(false);
 
     const inputRefs = [
         useRef<HTMLInputElement>(null),
@@ -38,20 +36,36 @@ function OtpComponent({ userData }: { userData: TempData }) {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            if (countdown > 0) {
-                setCountdown((prev) => prev - 1)
-            } else {
-                setShowResend(false);
-            }
+            setCountdown(prev => {
+                if (prev > 0) {
+                    return prev - 1;
+                } else {
+                    clearInterval(timer);
+                    setShowResend(true);
+                    setLoading(false)
+                    return 0;
+                }
+            });
         }, 1000);
-        return () => {
-            clearInterval(timer)
-        }
+
+        return () => clearInterval(timer);
     }, [countdown]);
+
 
     useEffect(() => {
         inputRefs[0].current?.focus();
-    }, [])
+    }, []);
+
+    const formatTime = (time: number): string => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        
+        if (minutes > 0) {
+            return `${minutes} minute${minutes !== 1 ? 's' : ''} ${seconds.toString().padStart(2, '0')} seconds`;
+        } else {
+            return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+        }
+    };
 
     const handleOtpChange = (index: number, value: string) => {
         switch (index) {
@@ -75,12 +89,8 @@ function OtpComponent({ userData }: { userData: TempData }) {
         }
     };
 
-
-
-    const handleBackSpace = async (index: number, e: KeyboardEvent<HTMLInputElement>) => {
-
+    const handleBackSpace = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Backspace') {
-            // If the current input has no value and is not the first input, move focus to the previous input
             switch (index) {
                 case 1:
                     setOtp1("");
@@ -101,47 +111,55 @@ function OtpComponent({ userData }: { userData: TempData }) {
                 inputRefs[index - 2].current?.focus();
             }
         }
-    }
+    };
 
     const handleToResendOtp = async () => {
-        setCountdown(60);
-        setShowResend(true);
-        dispatch(signupUser(userData))
-        console.log("called the resend button");
+        setCountdown(120);
+        setShowResend(false);
+        // setLoading(true);
+        try {
+            const { otp,...restData } = userData
+            const res = await dispatch(signupUser(restData));
+            console.log("Resend OTP successful",res);
+            toast.success("OTP resent successfully");
+        } catch (error: any) {
+            console.error("Resend OTP error", error);
+            toast.error("Failed to resend OTP");
+        } finally {
+            setLoading(false)
+        }
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const joinedOtp = "" + otp1 + otp2 + otp3 + otp4
-        console.log(joinedOtp,'----------')
-        userData.otp = joinedOtp
-        console.log(userData,"OTP IN THE HANDLE SUBMIT");
+        
+        setLoading(false);
 
-        //validate otp
+        event.preventDefault();
+        const joinedOtp = otp1 + otp2 + otp3 + otp4;
+        userData.otp = joinedOtp;
         const otpPattern = /^[0-9]{4}$/;
-        if(otpPattern.test(userData.otp) && userData.otp.length<4) {
-            toast.error("invalid otp! ")
+
+        if (!otpPattern.test(userData.otp)) {
+            toast.error("Invalid OTP");
+            setLoading(false);
             return;
         }
 
-        try{
-        const res = await dispatch(signupUser(userData));
-        if(res.payload?.success){
-            console.log("signup successfull",res);
-            toast.success("signup succesfull");
-            navigate('/');
-        }else{
-            console.log("in the otp handlesubmit");
-            toast.error("OTP is invalid. please try again");          
-            setError(res.payload?.data.message);
-            setLoading(false)
+        try {
+            const res = await dispatch(signupUser(userData));
+            if (res.payload?.success) {
+                toast.success("Signup successful");
+                navigate('/');
+            }else {
+                console.log(res.payload);
+                toast.error(res.payload)
+            }
+        } catch (error: any) {
+            toast.error(error);
+        } finally {
+            setLoading(false);
         }
-       }catch(error:any) {
-            console.error("signup error",error);
-            toast.error("signup failed")
-       }
     };
-
 
     return (
         <>
@@ -173,41 +191,40 @@ function OtpComponent({ userData }: { userData: TempData }) {
                         ))}
                     </div>
 
+                    {loading && (
+                        <div className="flex justify-center items-center">
+                            <ClipLoader size={50} color={"#300370"}  />
+                        </div>
+                    )}
+
                     <div className="flex flex-col space-y-5">
                         <div>
-                            <button  className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-3 bg-darkBlue font-bold hover:bg-white hover:text-darkBlue  text-white text-sm shadow-sm" >
+                            <button className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-3 bg-darkBlue font-bold hover:bg-white hover:text-darkBlue text-white text-sm shadow-sm" disabled={loading}>
                                 Verify Account
                             </button>
                         </div>
                         <div className='text-white text-center'>
-                            {showResend && (
-                                <span>{` OTP Valid For :  (${countdown}sec )`}</span>
-                            )}
+                            {!showResend && (
+                        <span className='text-yellow-700'>{`OTP Valid For: ${formatTime(countdown)}`}</span>
+                    )}
                         </div>
                         <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
                             <p className='font-bold'>Didn't receive code?</p>{""}
-                            <a
-                                className={`flex flex-row items-center ${!showResend ? "text-blue-600" : "text-gray-400"
-                                    }`}
-                                rel="noopener noreferrer"
-                            >
-
+                            {showResend && (
                                 <button
                                     type='button'
                                     onClick={handleToResendOtp}
-                                    disabled={!showResend}
                                     className='font-bold text-darkBlue'
                                 >
-                                    Resend
+                                    Resend OTP
                                 </button>
-
-                            </a>
+                            )}
                         </div>
                     </div>
                 </div>
             </form>
         </>
-    )
+    );
 }
 
-export default OtpComponent
+export default OtpComponent;

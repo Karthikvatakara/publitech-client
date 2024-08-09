@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { signupUser,getUserData,loginUser,logout,applyToTeach } from "../../actions/user/userActions";
+import { signupUser,getUserData,loginUser,logout,applyToTeach,forgotPassword,googleLoginSignup,editUserProfile } from "../../actions/user/userActions";
 
 
 const initialState = {
@@ -86,6 +86,52 @@ const userSlice = createSlice({
             .addCase(applyToTeach.rejected,(state,{payload}) => {
                 state.loading = false;
                 state.error = payload
+            })
+            // forgot password
+            .addCase(forgotPassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+              })
+              .addCase(forgotPassword.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.error = null;
+                state.user = payload;
+              })
+              .addCase(forgotPassword.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload as string;
+              })
+            //   google auth
+            .addCase(googleLoginSignup.pending,(state) => {
+                state.loading = true
+                state.user = null;
+                state.error = null
+            })
+            .addCase(googleLoginSignup.fulfilled,(state,{ payload }) => {
+                state.loading = false,
+                state.user = payload.data,
+                state.error = null
+            })
+            .addCase(googleLoginSignup.rejected,(state,{ payload })=>{
+                state.loading = false,
+                state.user = null,
+                state.error = payload
+            })
+
+            // editUserProfile
+            .addCase(editUserProfile.pending,(state) => {
+                state.loading = true,
+                state.user = null;
+                state.error = null
+            })
+            .addCase(editUserProfile.fulfilled,(state,{ payload }) => {
+                state.loading = false,
+                state.user = payload.data,
+                state.error = null
+            })
+            .addCase(editUserProfile.rejected,( state,{ payload }) => {
+                state.loading = false,
+                state.error = payload as string
             })
     }
 })

@@ -1,13 +1,4 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.jutify-between {
-  @apply flex justify-between
-}
-
-body{
-  width: 100%;
-  overflow-x: hidden;
-  font-family: "IBM";
-}
+  @tailwind components;
+  @tailwind utilities;
+  

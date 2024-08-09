@@ -10,7 +10,9 @@ import { useDispatch } from "react-redux";
 import { AppState,RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google"
+import { googleLoginSignup } from "../redux/actions/user/userActions";
 
 const Login = () => {
   const [formData, setFormData] = useState<{ email: string; password: string }>(
@@ -19,16 +21,15 @@ const Login = () => {
 
   const { user,error } = useSelector((state:RootState)=> state.user);
   const dispatch = useDispatch<AppState>();
-
+  const navigate = useNavigate();
   const handleSubmit = async(values:loginFormValues) => {
-    // const { email,password } = values;
 
     const result =  await dispatch(loginUser(values));
-    console.log(user,"1111111111111111111111");
     
     if(result.meta.requestStatus === "fulfilled"){
       console.log(result);
       toast.success(result?.payload.message);
+      navigate("/");
     }
     if(result.meta.requestStatus ==="rejected"){
       toast.error(result?.payload);
@@ -47,6 +48,13 @@ const Login = () => {
   const initialValues:loginFormValues = {
     email:"",
     password:""
+  }
+
+  const loginWithGoogle = async(data:any) => {
+    console.log("🚀 ~ loginWithGoogle ~ data:", data)
+    const res = await dispatch(googleLoginSignup(data))
+    console.log("🚀 ~ loginWithGoogle ~ res:", res)
+    
   }
 
   return (
@@ -95,21 +103,35 @@ const Login = () => {
               style={{ padding: "20px" }}
             />
             
-            <button type="submit" className="border border-1 border-primary text-primary text-center cursor-pointer rounded-xl p-2 ms-3 mt-4 font-bold w-full hover:text-white hover:bg-primary">login</button>
+            <button type="submit" className="border border-1 border-primary bg-primary text-white text-center cursor-pointer rounded-xl p-2 ms-3 mt-4 font-bold w-full hover:text-white hover:bg-darkBlue">login</button>
           </Form>
           </Formik>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 space-y-2">
+          <div className="flex justify-center ">
+              <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                loginWithGoogle(credentialResponse);
+              }}
+              onError={() => {
+                console.log("login failed"); 
+              }}/>
+              </div>
             <h1 className="font-bold">
               dont have an account ?{" "}
               <span className="font-bold hover:text-[#22036F] text-primary">
                 <Link to={"/signup"}>Register</Link>
               </span>
             </h1>
+             
+              <div className="flex justify-center items-center">
+               <Link to={"/forgot-password"}><h1 className="font-bold hover:text-[#22036F] text-primary cursor-pointer">Forgot-password</h1></Link> 
+              </div>
           </div>
         </div>
         <div className="col-span-5 bg-[#AFB3FF] hidden md:block"></div>
+        
         <img
           src={loginlaptop}
           alt=""

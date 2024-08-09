@@ -43,7 +43,7 @@ const InputField: FC<InputFieldProps> = ({
           )}
         </Field>
       </label>
-      <ErrorMessage  name={name} component="div" className="text-red-600 " />
+      <ErrorMessage  name={name} component="div" className="text-red-600 font-semibold " />
     </div>
   );
 };

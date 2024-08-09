@@ -49,6 +49,7 @@ function ApplytoTeachForm() {
         const result = await dispatch(applyToTeach(values));
         if(result.meta.requestStatus === "fulfilled"){
             toast.success("instructor application submitted ")
+            navigate("/apply-success");
         }
         if(result.meta.requestStatus === "rejected"){
             toast.error(result.payload || "application submission failed")

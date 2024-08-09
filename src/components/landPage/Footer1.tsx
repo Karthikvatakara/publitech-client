@@ -1,56 +1,59 @@
+import React from 'react';
 import { FaFacebook, FaInstagram } from "react-icons/fa";
-// import image from "../assets/Screenshot_161-removebg-preview.png";
 import logo from "../../assets/publitechwhitelogo.png"
 import { TiSocialTwitterCircular } from "react-icons/ti";
 import { ImLinkedin } from "react-icons/im";
 
 const Footer = () => {
   return (
-    <div className="h-[400px] w-full bg-darkBlue mt-10">
-      <div className="flex gap-4 justify-between flex-col md:flex-row">
-        <div>
-        <div className="flex pt-10 ps-14">
-          <img className="h-[50px] w-44 hover:scale-110 cursor-pointer" src={logo}  alt="" />
+    <footer className="bg-darkBlue text-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div>
+            <img className="h-12 w-auto mb-4" src={logo} alt="Publitech Logo" />
+            <p className="text-sm">
+              Find reliable blue-collar workers for your home projects. Browse
+              profiles and book skilled professionals hassle-free.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-4">About</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="hover:text-yellow-100">Services</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Teach With us</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Terms</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Privacy Policy</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Resources</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="hover:text-yellow-100">Help Docs</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Guide</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Updates</a></li>
+              <li><a href="#" className="hover:text-yellow-100">Contact Us</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Follow Us</h3>
+            <div className="flex space-x-4">
+              <a href="#" className="hover:text-yellow-100"><FaFacebook size={24} /></a>
+              <a href="#" className="hover:text-yellow-100"><TiSocialTwitterCircular size={24} /></a>
+              <a href="#" className="hover:text-yellow-100"><ImLinkedin size={24} /></a>
+              <a href="#" className="hover:text-yellow-100"><FaInstagram size={24} /></a>
+            </div>
+          </div>
         </div>
-        <div className="w-[350px]  ms-14 ">
-        <h1 className="text-lg cursor-default text-white">
-        Find reliable blue-collar workers for your home projects. Browse
-                profiles and book skilled professionals hassle-free.
-        </h1>
+        <hr className="my-8 border-gray-700" />
+        <div className="flex flex-col sm:flex-row justify-between items-center">
+          <p className="text-sm">&copy; 2024 Publitech. All rights reserved.</p>
+          <div className="mt-4 sm:mt-0">
+            <a href="#" className="text-sm hover:text-yellow-100 mr-4">Terms of Service</a>
+            <a href="#" className="text-sm hover:text-yellow-100">Privacy Policy</a>
+          </div>
+        </div>
       </div>
-        </div>
-       
-        <div className="pt-16 text-white">
-          <p className="font-semibold cursor-default">About</p>
-          <ul className="mt-5">
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Services</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Teach With us</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Terms</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Privacy Policy</li>
-          </ul>
-        </div>
-        <div className="pt-16 text-white">
-          <p className="font-semibold cursor-default">Resources</p>
-          <ul className="mt-5">
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Help Docs</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Guide</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Updates</li>
-            <li className="pt-2 cursor-pointer hover:text-yellow-100">Contact Us</li>
-          </ul>
-        </div>
-        <div></div>
-      </div>
-      <hr className="mt-24 mx-16 text-white" />
-      <div className="flex mt-5 mx-16 justify-between text-white">
-        <p>2024 @ LabourConnect. All rights reserved.</p>
-        <div className="flex gap-5">
-          <FaFacebook className="cursor-pointer hover:text-yellow-100" />
-          <TiSocialTwitterCircular className="cursor-pointer hover:text-yellow-100" />
-          <ImLinkedin className="cursor-pointer hover:text-yellow-100" />
-          <FaInstagram className="cursor-pointer hover:text-yellow-100" />
-        </div>
-      </div>
-    </div>
+    </footer>
   );
 };
 

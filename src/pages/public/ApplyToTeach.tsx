@@ -7,13 +7,15 @@ import Footer from '../../components/landPage/Footer1';
 
 function ApplyToTeach() {
   return (
-    <>
-    <Navbar/>
-    <Banner/>
-    <HeroSection/>
-    <VideoPart/>
-    <Footer/>
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">
+        <Banner />
+        <HeroSection />
+        <VideoPart />
+      </main>
+      <Footer />
+    </div>
   )
 }
 

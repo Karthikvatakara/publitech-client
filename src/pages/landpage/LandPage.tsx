@@ -19,7 +19,7 @@ function LandPage() {
         </div>
             <HeroSection/>
             <CourseTittle/>
-            <CardGroup/>
+            {/* <CardGroup/> */}
             <InstructorGroup/>
             <Footer1/>
         </div>

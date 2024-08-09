@@ -7,6 +7,10 @@ interface ApiResponseError extends Error {
     }
 }
 
+
+
+export const GOOGLE_ID = import.meta.env.VITE_REACT_APP_GOOGLE_ID;
+
 export const config = {
     headers: {
         "content-Type": "application/json",
@@ -14,6 +18,13 @@ export const config = {
     withCredentials: true,
 }
 
+export const configMultiPart = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    withCredentials: true,
+  };
+  
 export const handleError = (error: ApiResponseError, rejectWithValue: (value: string | unknown)=> void) => {
 
     if(error.response && error.response.data && error.response.data.message) {
@@ -27,3 +38,4 @@ export const handleError = (error: ApiResponseError, rejectWithValue: (value: st
         return rejectWithValue({message:"an unknown error occured"});
     }
 }
+

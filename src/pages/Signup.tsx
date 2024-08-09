@@ -11,6 +11,9 @@ import { AppState,RootState } from '../redux/store';
 import { signupUser } from '../redux/actions/user/userActions';
 import toast from 'react-hot-toast'
 import OtpComponent from '../components/otp/OtpComponent';
+import { Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { googleLoginSignup } from '../redux/actions/user/userActions';
 
 interface SignupFormValues {
   username: string;
@@ -47,6 +50,7 @@ const signupValidationSchema = Yup.object().shape({
     .required('Confirm password is required')
 });
 
+
 const Signup: React.FC = () => {
   const { user ,error } = useSelector((state:RootState)=> state.user);
   const dispatch = useDispatch<AppState>();
@@ -73,16 +77,22 @@ const Signup: React.FC = () => {
         setTempData(restValues);
         setIsOtp(!isOtp);
       }else if(result.meta.requestStatus === "rejected"){
-        toast.error("signup failed")
-         const errorResponse = result.payload as any
-          toast.error(errorResponse?.response?.data.error || "signup failed");
+        // toast.error("signup failed")
+        toast.error(result?.payload);
+        //  const errorResponse = result.payload as any
+          // toast.error(errorResponse?.response?.data.error || "signup failed");
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-
+  const loginWithGoogle = async(data:any) => {
+    console.log("🚀 ~ loginWithGoogle ~ data:", data)
+    const res = await dispatch(googleLoginSignup(data))
+    console.log("🚀 ~ loginWithGoogle ~ res:", res)
+  }
+  
   return (
     <div className='min-h-screen grid md:grid-cols-12 relative'>
       <div className='md:col-span-5 hidden md:block bg-[#AFB3FF]'></div>
@@ -173,8 +183,19 @@ const Signup: React.FC = () => {
               </button>
             </Form>
           </Formik>
-          <div className='flex justify-center mt-3'> 
-            <h1 className='font-bold'>Yes I have an account? <span className='text-primary hover:text-[#22036F]'>Login</span></h1>
+          <div className=' mt-3 space-y-2'> 
+          <div className="flex justify-center ">
+              <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                loginWithGoogle(credentialResponse);
+              }}
+              onError={() => {
+                console.log("login failed"); 
+              }}/>
+              </div>
+            <div className='flex justify-center'>
+            <h1 className='font-bold'>Yes I have an account? <span className='text-primary hover:text-[#22036F]'><Link to={"/login"}>Login</Link></span></h1>
+            </div>
           </div>
         </div>
         </>
