@@ -50,6 +50,7 @@ import CoursePreview from "./pages/user/course/CoursePreview";
 import InstructorChat from "./pages/instructor/chat/InstructorChat";
 import ChatSubscriptionPage from "./pages/instructor/chat/ChatSubscriptionPage";
 import UserSubscriptionSuccessPage from "./pages/user/UserSubscriptionSuccessPage";
+import UsersList from "./pages/admin/UsersList";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -137,6 +138,7 @@ const App: FC = () => {
           <Route path="requests" element={<InstructorRequests />} />
           <Route path="construction" element={<UnderConstruction />} />
           <Route path="categories" element={<Categories />} />
+          <Route path="users" element={<UsersList/>}/>
           <Route path="courses" >
             <Route index element={<CourseApproval/>}/>
             <Route path="details/:courseId" element={<CourseDetailsAdmin/>}/>

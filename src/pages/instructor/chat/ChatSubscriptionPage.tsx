@@ -33,7 +33,7 @@ export const StudentChatSubscription: React.FC = () => {
 
   const plans = [
     {
-      title: "Basic",
+      title: "basic",
       price: 199,
       description1: "Unlimited lifetime access",
       description2: "Standard support",
@@ -43,7 +43,7 @@ export const StudentChatSubscription: React.FC = () => {
         "https://res.cloudinary.com/dneak7rwh/image/upload/v1720203648/basics_cw6tkk.jpg",
     },
     {
-      title: "Premium",
+      title: "premium",
       price: 699,
       description1: "Unlimited lifetime access",
       description2: "One-on-one mentorship",
@@ -53,7 +53,7 @@ export const StudentChatSubscription: React.FC = () => {
         "https://res.cloudinary.com/dneak7rwh/image/upload/v1720203722/premium_nfyfbc.jpg",
     },
     {
-      title: "Standard",
+      title: "standard",
       price: 399,
       description1: "Unlimited lifetime access",
       description2: "Priority support",

@@ -24,6 +24,7 @@ export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[
     { to: "/", icon: faTachometerAlt, label: "Dashboard" },
     { to: "/admin/instructors", icon: faChalkboardTeacher, label: "Instructors" },
     { to: "/admin/categories", icon: faBook, label: "Categories" },
+    { to: "/admin/users", icon: faBook, label: "users" },
     { to: "/admin/courses", icon: faClipboard, label: "Courses" },
     { to: "/admin/messages", icon: faUserGraduate, label: "messages" },
     { to: "/admin/requests", icon: faEnvelope, label: "Requests" },

@@ -54,6 +54,9 @@ const Login = () => {
     console.log("🚀 ~ loginWithGoogle ~ data:", data)
     const res = await dispatch(googleLoginSignup(data))
     console.log("🚀 ~ loginWithGoogle ~ res:", res)
+    if(res.meta.requestStatus === "rejected"){
+      toast.error(res?.payload);
+    }
     
   }
 

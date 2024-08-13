@@ -148,9 +148,15 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
       if (selectedChat?.subscriptionType === 'none') {
         return (
           <div className="flex flex-col justify-center items-center h-full">
-            <p className="text-sm text-yellow-700 mb-4">
+             <Player
+              autoplay
+              loop
+              src="https://lottie.host/796d373b-b83b-4549-8844-5c7c0785cdf5/uK3TWZDZ1K.json"
+              style={{ height: '250px', width: '250px' }}
+        />
+            {/* <p className="text-sm text-yellow-700 mb-4">
               You need to take a subscription to access this chat.
-            </p>
+            </p> */}
             <button
               className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors duration-300"
             onClick={handleSubscriptionSubmit}>

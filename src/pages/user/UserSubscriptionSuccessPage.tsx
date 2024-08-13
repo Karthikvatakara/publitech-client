@@ -89,7 +89,7 @@ const UserSubscriptionSuccessPage: React.FC = () => {
                                 )}
                                 <div className="mt-6 md:mt-8 flex justify-center">
                                     <Link
-                                        to="/dashboard"  // Adjust this to the appropriate route for your mentor chat or dashboard
+                                        to="/student/messages"  // Adjust this to the appropriate route for your mentor chat or dashboard
                                         className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 border border-transparent text-sm md:text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
                                         <FaArrowLeft className="mr-2" />

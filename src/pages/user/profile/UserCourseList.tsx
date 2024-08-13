@@ -4,6 +4,8 @@ import { AppState, RootState } from '../../../redux/store';
 import { userEnrollments } from '../../../redux/actions/enrollment/enrollmentActions';
 import { EnrollmentEntity } from '../../../interface/EnrollmentEntity';
 import UserCourseCard from '../common/UserCourseCard';
+import { Player } from '@lottiefiles/react-lottie-player';
+
 
 const UserCourseList: React.FC = () => {
   const dispatch = useDispatch<AppState>();
@@ -31,7 +33,15 @@ const UserCourseList: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center text-gray-600">No enrollments found.</div>
+        <>
+        <Player
+              autoplay
+              loop
+              src="https://lottie.host/f1f86a63-e042-4e92-8f92-8eba70f38a69/2pzqd7M4BA.json"
+              style={{ height: '250px', width: '250px' }}
+        />
+        <p className='font-semibold text-gray-400 text-center'>No Enrollments found</p>
+        </>
       )}
     </div>
   );
