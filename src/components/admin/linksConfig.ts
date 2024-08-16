@@ -26,7 +26,7 @@ export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[
     { to: "/admin/categories", icon: faBook, label: "Categories" },
     { to: "/admin/users", icon: faBook, label: "users" },
     { to: "/admin/courses", icon: faClipboard, label: "Courses" },
-    { to: "/admin/messages", icon: faUserGraduate, label: "messages" },
+    { to: "/admin/payments", icon: faUserGraduate, label: "payments" },
     { to: "/admin/requests", icon: faEnvelope, label: "Requests" },
     // { to: "/profile", icon: faUser, label: "Profile" },
   ],
