@@ -52,6 +52,7 @@ import ChatSubscriptionPage from "./pages/instructor/chat/ChatSubscriptionPage";
 import UserSubscriptionSuccessPage from "./pages/user/UserSubscriptionSuccessPage";
 import UsersList from "./pages/admin/UsersList";
 import AdminPayments from "./pages/admin/payments/AdminPayments";
+import UserPayment from "./pages/user/UserPayment";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -71,6 +72,7 @@ const App: FC = () => {
     if (!user) {
       return <Navigate to="/" />;
     }
+    // console.log(user,"//////////????????????????<<<<<<<<<<")
     if (allowedRoles.includes(user.role)) {
       console.log(user.role, "userrole");
       return element;
@@ -196,6 +198,7 @@ const App: FC = () => {
           <Route path="profile" element={<InstructorProfile/>}/>
           <Route path="messages" element={<InstructorChat/>}/>
           <Route path="subscription/:chatId" element={<ChatSubscriptionPage/>}/>
+          <Route path="payments" element={<UserPayment/>}/>
           {/* Add other student routes here */}
         </Route>
 

@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState, RootState } from '../../../redux/store';
 import { getSingleCourse } from '../../../redux/actions/course/courseActons';
 import ReactPlayer from 'react-player';
-import { FaPlay, FaPaperclip, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaPlay, FaPaperclip, FaChevronDown, FaChevronUp, FaCheckCircle } from 'react-icons/fa';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import axios from 'axios'
 
 function CoursePreview() {
   const [courseData, setCourseData] = useState<any | null>(null);
@@ -13,6 +14,7 @@ function CoursePreview() {
   const { courseId } = useParams<{ courseId: string }>();
   const dispatch = useDispatch<AppState>();
   const { loading, course } = useSelector<RootState, { loading: boolean; course: any }>((state) => state.courses);
+  const [ lessonProgress, setLessonProgress ] = useState({});
 
   useEffect(() => {
     if (courseId) {
