@@ -55,6 +55,7 @@ const Login = () => {
     const res = await dispatch(googleLoginSignup(data))
     console.log("🚀 ~ loginWithGoogle ~ res:", res)
     if(res.meta.requestStatus === "rejected"){
+      toast.error("internal server error")
       toast.error(res?.payload);
     }
     

@@ -53,6 +53,11 @@ import UserSubscriptionSuccessPage from "./pages/user/UserSubscriptionSuccessPag
 import UsersList from "./pages/admin/UsersList";
 import AdminPayments from "./pages/admin/payments/AdminPayments";
 import UserPayment from "./pages/user/UserPayment";
+import InstructorExamHome from "./pages/user/exams/InstructorExamHome";
+import ExamCreate from "./pages/user/exams/ExamCreate";
+import QuestionCreate from "./pages/user/exams/QuestionCreate";
+import ExamUserPage from "./pages/user/exams/ExamUserPage";
+import ExamResultPage from "./pages/user/exams/ExamResultPage";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -73,7 +78,7 @@ const App: FC = () => {
       return <Navigate to="/" />;
     }
     // console.log(user,"//////////????????????????<<<<<<<<<<")
-    if (allowedRoles.includes(user.role)) {
+    if (allowedRoles.includes(user.role)&& !user.isBlocked) {
       console.log(user.role, "userrole");
       return element;
     }
@@ -81,9 +86,11 @@ const App: FC = () => {
     return <Navigate to="/unauthorized" />;
   };
 
+  
+
   return (
     <Router>
-      {loading && <LoadingSpinner />}
+      {/* {loading && <LoadingSpinner />} */}
       <Routes>
         <Route
           path="/"
@@ -177,6 +184,11 @@ const App: FC = () => {
             <Route path="uploadlessons" element={<UploadLessons/>}/>
           </Route>
           <Route  path="messages" element={<InstructorChat/>}/>
+          <Route path="exams" element={<InstructorExamHome/>}/>
+          <Route path="exams/create" element={<ExamCreate/>}/>
+          <Route path="exams/edit/:examId" element={<ExamCreate/>}/>
+          <Route path="exams/create/question" element={<QuestionCreate/>}/>
+          <Route path="exams/create/question/:examId" element={<QuestionCreate/>}/>
         </Route>
 
         {/* STUDENT PAGES */}
@@ -199,6 +211,8 @@ const App: FC = () => {
           <Route path="messages" element={<InstructorChat/>}/>
           <Route path="subscription/:chatId" element={<ChatSubscriptionPage/>}/>
           <Route path="payments" element={<UserPayment/>}/>
+          <Route path="exams/:examId" element={<ExamUserPage/>}/>
+          <Route path="exam-result/:resultId" element={<ExamResultPage/>}/>
           {/* Add other student routes here */}
         </Route>
 

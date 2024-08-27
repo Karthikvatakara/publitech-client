@@ -35,7 +35,7 @@ export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[
     { to: "/instructor/course", icon: faBook, label: "My Courses" },
     // { to: "/instructor/announcements", icon: faClipboard, label: "Announcements" },
     { to: "/createcourse/uploadtrailer", icon: faClipboard, label: "Assessments" },
-    { to: "/instructor/imageUpload", icon: faUserGraduate, label: "My Students" },
+    { to: "/instructor/exams", icon: faUserGraduate, label: "Exams" },
     { to: "/instructor/messages", icon: faEnvelope, label: "Messages" },
     { to: "/instructor/settings", icon: faCog, label: "Settings" },
     { to: "/instructor/profile", icon: faUser, label: "Profile" },

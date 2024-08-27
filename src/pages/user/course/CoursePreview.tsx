@@ -1,20 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState, RootState } from '../../../redux/store';
 import { getSingleCourse } from '../../../redux/actions/course/courseActons';
 import ReactPlayer from 'react-player';
 import { FaPlay, FaPaperclip, FaChevronDown, FaChevronUp, FaCheckCircle } from 'react-icons/fa';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
-import axios from 'axios'
+import axios from 'axios';
+import _ from 'lodash';
+import LessonItem from './courseComponents/LessonItem';
+import { URL } from '../../../common/api';
+import { config } from '../../../common/configurations';
+import ExpandableDescription from './courseComponents/ExpandableDescription';
+import { RiPlayReverseFill } from 'react-icons/ri';
+import { EnrollmentEntity } from '../../../interface/EnrollmentEntity';
+import { assessmentEntity } from '../../../interface/assessmentEntity';
+
+
+interface LessonProgress {
+  lastWatchedPosition?: number;
+  totalTimeWatched?: number;
+  isCompleted?: boolean;
+}
 
 function CoursePreview() {
   const [courseData, setCourseData] = useState<any | null>(null);
   const [currentLesson, setCurrentLesson] = useState<number>(0);
+  const [lessonProgress, setLessonProgress] = useState<LessonProgress>({});
   const { courseId } = useParams<{ courseId: string }>();
   const dispatch = useDispatch<AppState>();
   const { loading, course } = useSelector<RootState, { loading: boolean; course: any }>((state) => state.courses);
-  const [ lessonProgress, setLessonProgress ] = useState({});
+  const userId = useSelector((state: RootState) => state.user.user._id);
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [ enrollment, setEnrollment ] = useState<EnrollmentEntity | null>(null)
+  const [ examPresent, setExamPresent ] = useState<boolean>(false);
+  const [allLessonsCompleted, setAllLessonsCompleted] = useState<boolean>(false);
+  const [ examDetails, setExamDetails ] = useState<assessmentEntity | null>(null);
+  const navigate = useNavigate();
+
+  const playerRef = useRef<ReactPlayer>(null);
+
+  useEffect(() => {
+    getEnrolledCourse();
+    getExamsOfCourse();
+  },[])
 
   useEffect(() => {
     if (courseId) {
@@ -22,6 +51,26 @@ function CoursePreview() {
     }
   }, [dispatch, courseId]);
 
+  useEffect(() => {
+    if (courseId && courseData?.lessons[currentLesson]?._id) {
+      fetchLessonProgress(courseData.lessons[currentLesson]._id);
+    }
+  }, [courseId, currentLesson, courseData]);
+
+  const checkAllLessonsCompleted = useCallback(() => {
+    if (enrollment?.progress?.lessonProgress && courseData?.lessons) {
+      const allCompleted = courseData.lessons.every(lesson => 
+        enrollment?.progress?.lessonProgress.find(lp => lp.lessonId === lesson._id)?.isCompleted
+      );
+      setAllLessonsCompleted(allCompleted);
+    }
+  }, [enrollment, courseData]); 
+
+  useEffect(() => {
+    checkAllLessonsCompleted();
+  }, [enrollment, courseData, checkAllLessonsCompleted]);
+
+ 
   const getData = async (courseId: string) => {
     const response = await dispatch(getSingleCourse(courseId));
     if (response?.payload?.success) {
@@ -29,13 +78,83 @@ function CoursePreview() {
     }
   };
 
+  const getEnrolledCourse = async() => {
+    const response = await axios.get(`${URL}/api/course/enrollment/${courseId}/${userId}`,config);
+    setEnrollment(response?.data?.data)
+    console.log("🚀 ~ getEnrolledCourse ~ response:", response?.data?.data)
+  }
+
+  const getExamsOfCourse = async() => {
+    const response = await axios.get(`${URL}/api/course/exams/${courseId}`,config);
+    console.log("🚀 ~ getExamsOfCourse ~ response:", response)
+    if( response?.data?.succes ) {
+      console.log(response?.data?.success,"::::::::::::::::::::::::")
+      setExamPresent(true);
+      setExamDetails(response?.data?.data)
+    }
+    // console.log("🚀 ~ getExamsOfCourse ~ resonse:", response)
+  }
+
+  const fetchLessonProgress = async (lessonId: string) => {
+    try {
+      const response = await axios.get<{data: LessonProgress }>(`${URL}/api/course/lesson-progress/${userId}/${courseId}/${lessonId}`, config);
+      setLessonProgress(response?.data?.data || {});
+      // console.log(response?.data?.data,"????????????????????????????????????")
+    } catch (error) {
+      console.error('Error fetching lesson progress:', error);
+      setLessonProgress({});
+    }
+  };
+
   const handleLessonClick = (index: number) => {
     setCurrentLesson(index);
+    setHasInitialized(false);
+    if (courseData?.lessons[index]?._id) {
+      fetchLessonProgress(courseData.lessons[index]._id);
+    }
   };
 
   const handleOpenPDF = (attachmentUrl: string) => {
     window.open(attachmentUrl, '_blank');
   };
+
+  const handleProgress = useCallback(
+    _.debounce(async (progress) => {
+      const lessonId = courseData.lessons[currentLesson]._id;
+      const timeWatched = progress.playedSeconds;
+      const totalDuration = progress.loadedSeconds;
+      const isCompleted = (timeWatched / totalDuration) >= 0.95; // Consider it complete when 95% watched
+  
+      try {
+        await axios.post(`${URL}/api/course/lesson-progress`, {
+          userId,
+          courseId,
+          lessonId,
+          timeWatched,
+          totalDuration,
+          isCompleted
+        }, config);
+  
+        setLessonProgress(prev => ({
+          ...prev,
+          lastWatchedPosition: timeWatched,
+          totalTimeWatched: timeWatched,
+          isCompleted
+        }));
+  
+        if (isCompleted) {
+          getEnrolledCourse(); // Call this when the lesson is completed
+        }
+      } catch (error) {
+        console.error('Error updating lesson progress:', error);
+      }
+    }, 5000),
+    [userId, courseId, currentLesson, courseData, getEnrolledCourse]
+  );
+
+  const handleTakeExam = () =>{
+    navigate(`/student/exams/${examDetails?._id}`)
+  }
 
   if (loading) {
     return <LoadingSpinner />;
@@ -62,6 +181,16 @@ function CoursePreview() {
                   }
                 }
               }}
+              onProgress={handleProgress}
+              progressInterval={1000}
+              playing={false}
+              onReady={() => {
+                if (lessonProgress?.lastWatchedPosition && !hasInitialized) {
+                  playerRef.current?.seekTo(lessonProgress.lastWatchedPosition, 'seconds');
+                  setHasInitialized(true);
+                }
+              }}
+              ref={playerRef}
             />
           ) : (
             <div className="flex items-center justify-center h-64 bg-gray-200 rounded-lg">
@@ -105,88 +234,22 @@ function CoursePreview() {
                 index={index}
                 currentLesson={currentLesson}
                 handleLessonClick={handleLessonClick}
+                // progress={courseData.progress?.lessonProgress?.find(lp => lp.lessonId === lesson._id)}
+                progress={enrollment?.progress?.lessonProgress?.find(lp => lp.lessonId === lesson._id)}
               />
             ))}
-          </div>
+            {/* {console.log(examPresent,"EXAMPRESENT CONSOLLING")} */}
+            {/* {console.log(allLessonsCompleted,"all lessons Completed CONSOLLING")} */}
+            {examPresent && allLessonsCompleted && (
+          <button className='w-full bg-darkBlue text-white p-2 border rounded-md font-semibold' onClick={()=> handleTakeExam()}>
+            Take Exam
+          </button>
+        )}          
+        </div>
         </div>
       </div>
     </div>
   );
 }
-
-const ExpandableDescription = ({ description, maxWords }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  const words = description?.split(' ') || [];
-  const shortDescription = words.slice(0, maxWords).join(' ');
-  const isLongDescription = words.length > maxWords;
-
-  return (
-    <div className="text-gray-600 mb-4">
-      <p>
-        {isExpanded ? description : shortDescription}
-        {isLongDescription && !isExpanded && '...'}
-      </p>
-      {isLongDescription && (
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-blue-500 hover:text-blue-700 mt-2"
-        >
-          {isExpanded ? 'Show Less' : 'Show More'}
-        </button>
-      )}
-    </div>
-  );
-};
-
-const LessonItem = ({ lesson, index, currentLesson, handleLessonClick }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const words = lesson.description.split(' ');
-  const isLongDescription = words.length > 50;
-
-  const toggleExpand = (e) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <div
-      className={`p-3 rounded-md cursor-pointer transition duration-300 ease-in-out ${
-        currentLesson === index
-          ? 'bg-blue-100 border-l-4 border-blue-500'
-          : 'hover:bg-gray-100'
-      }`}
-      onClick={() => handleLessonClick(index)}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center flex-grow">
-          <FaPlay className={`mr-2 ${currentLesson === index ? 'text-blue-500' : 'text-gray-500'}`} />
-          <div className="flex-grow">
-            <h3 className="font-semibold">{lesson.title}</h3>
-            <p className={`text-sm text-gray-600 ${isExpanded ? '' : 'line-clamp-2'}`}>
-              {isExpanded ? lesson.description : words.slice(0, 50).join(' ')}
-              {isLongDescription && !isExpanded && '...'}
-            </p>
-            {isLongDescription && (
-              <button 
-                onClick={toggleExpand} 
-                className="text-blue-500 hover:text-blue-700 text-sm mt-1 focus:outline-none"
-              >
-                {isExpanded ? (
-                  <span className="flex items-center">Show Less <FaChevronUp className="ml-1" /></span>
-                ) : (
-                  <span className="flex items-center">Show More <FaChevronDown className="ml-1" /></span>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-        {lesson.attachments && (
-          <FaPaperclip className="text-gray-400 ml-2 flex-shrink-0" title="Attachment available" />
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default CoursePreview;
