@@ -58,6 +58,7 @@ import ExamCreate from "./pages/user/exams/ExamCreate";
 import QuestionCreate from "./pages/user/exams/QuestionCreate";
 import ExamUserPage from "./pages/user/exams/ExamUserPage";
 import ExamResultPage from "./pages/user/exams/ExamResultPage";
+import ExamsUser from "./pages/user/exams/ExamsUser";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -211,6 +212,7 @@ const App: FC = () => {
           <Route path="messages" element={<InstructorChat/>}/>
           <Route path="subscription/:chatId" element={<ChatSubscriptionPage/>}/>
           <Route path="payments" element={<UserPayment/>}/>
+          <Route path="exams" element={<ExamsUser/>}/>
           <Route path="exams/:examId" element={<ExamUserPage/>}/>
           <Route path="exam-result/:resultId" element={<ExamResultPage/>}/>
           {/* Add other student routes here */}

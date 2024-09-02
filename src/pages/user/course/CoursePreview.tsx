@@ -15,7 +15,7 @@ import ExpandableDescription from './courseComponents/ExpandableDescription';
 import { RiPlayReverseFill } from 'react-icons/ri';
 import { EnrollmentEntity } from '../../../interface/EnrollmentEntity';
 import { assessmentEntity } from '../../../interface/assessmentEntity';
-
+import ExamPassedModal from '../../../components/exam/ExamPassedModal';
 
 interface LessonProgress {
   lastWatchedPosition?: number;
@@ -36,13 +36,21 @@ function CoursePreview() {
   const [ examPresent, setExamPresent ] = useState<boolean>(false);
   const [allLessonsCompleted, setAllLessonsCompleted] = useState<boolean>(false);
   const [ examDetails, setExamDetails ] = useState<assessmentEntity | null>(null);
+  const [ examPassed, setExamPassed ] = useState<boolean>(false)
   const navigate = useNavigate();
-
+  const [ showPassedModal, setShowPassedModal ] = useState<boolean>(false);
   const playerRef = useRef<ReactPlayer>(null);
 
   useEffect(() => {
     getEnrolledCourse();
-    getExamsOfCourse();
+  },[])
+
+  useEffect(() => {
+    const fetchData = async() => {
+      await getExamsOfCourse();
+      getExamResult();
+    }
+    fetchData();
   },[])
 
   useEffect(() => {
@@ -51,11 +59,18 @@ function CoursePreview() {
     }
   }, [dispatch, courseId]);
 
+
   useEffect(() => {
     if (courseId && courseData?.lessons[currentLesson]?._id) {
       fetchLessonProgress(courseData.lessons[currentLesson]._id);
     }
   }, [courseId, currentLesson, courseData]);
+
+  useEffect(() => {
+    if (examDetails && examDetails._id) {
+      getExamResult();
+    }
+  }, [examDetails]);
 
   const checkAllLessonsCompleted = useCallback(() => {
     if (enrollment?.progress?.lessonProgress && courseData?.lessons) {
@@ -92,7 +107,6 @@ function CoursePreview() {
       setExamPresent(true);
       setExamDetails(response?.data?.data)
     }
-    // console.log("🚀 ~ getExamsOfCourse ~ resonse:", response)
   }
 
   const fetchLessonProgress = async (lessonId: string) => {
@@ -152,9 +166,32 @@ function CoursePreview() {
     [userId, courseId, currentLesson, courseData, getEnrolledCourse]
   );
 
-  const handleTakeExam = () =>{
-    navigate(`/student/exams/${examDetails?._id}`)
+  const getExamResult = async() => {
+    if(examDetails && examDetails?._id) {
+      const response = await axios.get(`${URL}/api/course/isResultExist/${examDetails?._id}`,config);
+      console.log("🚀 ~ getExamResult ~ response:", response)
+      if (response?.data?.success){
+        if(response?.data?.data?.isPassed){
+          setExamPassed(true)
+        }
+      }else{
+        setExamPassed(false)
+      }
+    }else{
+      console.log("not data is received yet");   
+    }
   }
+
+
+  const handleTakeExam = () => {
+    console.log(examPassed,"1222233333333333333333333333");
+    if(examPassed){
+      setShowPassedModal(true)
+    }else{
+      navigate(`/student/exams/${examDetails?._id}`)
+    }
+  }
+
 
   if (loading) {
     return <LoadingSpinner />;
@@ -248,7 +285,12 @@ function CoursePreview() {
         </div>
         </div>
       </div>
+      <ExamPassedModal
+      isOpen={showPassedModal}
+      onClose={() => setShowPassedModal(false)}
+    />
     </div>
+    
   );
 }
 

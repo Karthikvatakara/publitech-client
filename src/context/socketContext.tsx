@@ -41,6 +41,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             setSocket(newSocket);
 
             newSocket.on("getOnlineUsers", (users: string[]) => {
+                console.log(users,"socker connection")
                 setOnlineUsers(users);
             });
 

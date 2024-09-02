@@ -12,6 +12,10 @@ import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
 import { Player } from '@lottiefiles/react-lottie-player';
 import { useNavigate } from 'react-router-dom';
+import Peer from "peerjs";
+import { IoVideocam } from "react-icons/io5";
+import { VideoCall } from './VideoCall';
+import CallNotification from './CallNotification';
 
 interface ChatboxProps {
   selectedChat: any | null;
@@ -47,7 +51,26 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [ localPeerId, setLocalPeerId ] = useState<string>("");
+  const [ peer, setPeer ] = useState<peer | null>(null);
+  const [ localStream, setLocalStream ] = useState<MediaStream | null>(null);
+  const [ remoteStream, setRemoteStream ] = useState<MediaStream | null>(null);
+  const [ callStatus, setCallStatus ] = useState<"idle" | "calling" | "in-call">("idle")
+  const [ callError, setCallError] = useState<string | null>(null);
+  const [ incomingCall, setIncomingCall ] = useState<string | null>(null);
 
+  useEffect(() => {
+    const peer = new Peer();
+    peer.on("open",(id) => {
+      console.log("my peer id is??????????????????",id)
+      setLocalPeerId(id);
+    })
+    setPeer(peer);
+    return () => {
+      peer.destroy();
+    };
+  },[])
+  
   useEffect(() => {
     if (selectedChat) {
       getMessages();
@@ -72,12 +95,67 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
 
       socket.on("message received", handleMessageReceived);
 
+      socket?.on("incoming-call",(callerId) => {
+        console.log("🚀 ~aaaaaaaaaaaaaaaaaaaaaa ", callerId)
+        setIncomingCall(callerId)
+      })
+
+      socket?.on("end-call",endCall);
+
+      
       return () => {
         socket.off("message received", handleMessageReceived);
         socket.emit("leave chat", selectedChat._id);
+        socket.off("incoming-call")
       };
     }
   }, [socket, selectedChat]);
+
+  const handleAcceptCall = () => {
+    if (incomingCall) {
+      answerCall(incomingCall);
+      setIncomingCall(null);
+    }
+  };
+
+  const handleRejectCall = () => {
+    if (incomingCall) {
+      socket?.emit("reject-call", { callerId: incomingCall, chatId: selectedChat?._id });
+      setIncomingCall(null);
+    }
+  };
+
+  const answerCall = ( callerId: string ) => {
+    console.log("🚀 ~ answerCall ~ callerId:ansercalllllllllllllllll", callerId)
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true})
+    .then((stream) => {
+      setLocalStream(stream);
+      const call = peer?.call(callerId, stream);
+
+      call?.on("stream",(remoteStream: React.SetStateAction<MediaStream | null>) => {
+        console.log("🚀 ~ call.on ~ remoteStream:", remoteStream)
+        setRemoteStream(remoteStream);
+        setCallStatus("in-call");
+      })
+    })
+    .catch((error) => {
+      console.error("failed to get local Stream",error);
+      setCallStatus("idle");
+    }).finally(() => {
+      setCallStatus("idle");
+    }) 
+  }
+
+  const endCall = () => {
+    if( localStream ) {
+      localStream.getTracks().forEach((track) => track.stop());
+      setLocalStream(null);
+    }
+    setRemoteStream(null);
+    setCallStatus("idle");
+    socket?.emit("end-call",selectedChat?._id)
+  }
+
 
   const handleSubscriptionSubmit = () => {
     console.log("aaaaaaaaaa");
@@ -143,6 +221,36 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
     inputRef.current?.focus();
   };
 
+  const onStartCall = ( roomId: string ) => {
+    console.log(roomId,"it is the roomId")
+    console.log("🚀 ~ onStartCall ~ localPeerId:", localPeerId)
+    if( peer && localPeerId ) {
+      setCallStatus("calling");
+      socket?.emit("start-call",{ roomId, localPeerId });
+      startCall(localPeerId);
+    }
+  }
+
+  
+  const startCall = ( receiverId: string ) => {
+    console.log(receiverId,"receiverId");
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true})
+    .then((stream) =>{
+      setLocalStream(stream);
+
+      const call = peer?.call(receiverId, stream);
+      console.log("🚀 ~ .then ~ call:", call)
+      call?.on("stream",(remoteStream) => {
+        console.log("::::::::::::::::::::::")
+        setRemoteStream(remoteStream);
+        setCallStatus("in-call")
+      })
+    }).catch((error)=>{
+      console.error("failed to get local stream",error);
+      setCallStatus("idle");
+    })
+  }
+
   const renderSubscriptionMessage = () => {
     if (user.role === 'student') {
       if (selectedChat?.subscriptionType === 'none') {
@@ -169,7 +277,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
       if (selectedChat?.subscriptionType === 'none') {
         return (
           <div className="flex flex-col justify-center items-center h-full">
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-yellow-700 font-bold">
               The student has not taken a subscription for this chat.
             </p>
           </div>
@@ -199,7 +307,8 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] sm:h-[calc(100vh-4rem)] m-2 sm:m-4 bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Chat Header */}
-      <div className="bg-gray-100 p-4 border-b flex items-center">
+      <div className="  flex bg-gray-100 items-center justify-between ">
+        <div className='bg-gray-100 p-4 border-b flex items-center"'>
         {onBackClick && (
           <button
             className="mr-4 text-gray-600 hover:text-gray-800 transition duration-300"
@@ -237,8 +346,11 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
                 ? 'Online' 
                 : 'Offline'}
           </p>
+          </div>
         </div>
-      </div>
+        <IoVideocam size={30} className='m-4' onClick={() => 
+          callStatus === "idle" && onStartCall(selectedChat?._id)}/>
+        </div>
 
       {/* Chat Messages or Subscription Message */}
       {selectedChat?.subscriptionType === 'none' ? (
@@ -299,6 +411,18 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
             </button>
           </div>
         </div>
+      )}
+        {incomingCall && (
+        <CallNotification
+          onAccept={handleAcceptCall}
+          onReject={handleRejectCall}
+        />
+      )}
+      {callStatus !== "idle" && (
+        <VideoCall
+        localStream={localStream}
+        remoteStream={remoteStream}
+        onEndCall={endCall}/>
       )}
     </div>
   );

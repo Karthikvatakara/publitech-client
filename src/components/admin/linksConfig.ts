@@ -43,7 +43,7 @@ export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[
   student: [
     { to: "/student", icon: faTachometerAlt, label: "Dashboard" },
     { to: "/student/courses", icon: faBook, label: "My Courses" },
-    { to: "/student/assignments", icon: faClipboard, label: "Exams" },
+    { to: "/student/exams", icon: faClipboard, label: "Exams" },
     { to: "/student/payments", icon: faGraduationCap, label: "payment" },
     // { to: "/student/schedule", icon: faCalendarAlt, label: "Schedule" },
     // { to: "/student/certificates", icon: faCertificate, label: "Certificates" },
