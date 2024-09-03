@@ -59,18 +59,52 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
   const [ callError, setCallError] = useState<string | null>(null);
   const [ incomingCall, setIncomingCall ] = useState<string | null>(null);
 
+
+  
   useEffect(() => {
     const peer = new Peer();
-    peer.on("open",(id) => {
-      console.log("my peer id is??????????????????",id)
+    
+    peer.on("open", (id) => {
+      console.log("my peer id is", id);
       setLocalPeerId(id);
-    })
+    });
+  
+    // Handle incoming calls
+    peer.on("call", (incomingCall) => {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          setLocalStream(stream);
+  
+          // Answer the call with the local stream
+          incomingCall.answer(stream);
+  
+          // Listen for the remote stream
+          incomingCall.on("stream", (remoteStream) => {
+            console.log("Received remote stream:", remoteStream);
+            setRemoteStream(remoteStream);
+            setCallStatus("in-call");
+          });
+  
+          incomingCall.on('error', (err) => {
+            console.error("Call error:", err);
+            setCallError("Error during the call. Please try again.");
+          });
+  
+        })
+        .catch((error) => {
+          console.error("Failed to get local stream", error);
+          setCallError("Failed to get local stream.");
+        });
+    });
+  
     setPeer(peer);
+  
     return () => {
       peer.destroy();
     };
-  },[])
+  }, []);
   
+
   useEffect(() => {
     if (selectedChat) {
       getMessages();
@@ -131,12 +165,17 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
     .then((stream) => {
       setLocalStream(stream);
       const call = peer?.call(callerId, stream);
-
+      
       call?.on("stream",(remoteStream: React.SetStateAction<MediaStream | null>) => {
         console.log("🚀 ~ call.on ~ remoteStream:", remoteStream)
         setRemoteStream(remoteStream);
         setCallStatus("in-call");
+        console.log("🚀 ~ .then ~ call:", call)
       })
+
+      call.on('error', (err) => {
+        console.error("Call error:", err);
+      });
     })
     .catch((error) => {
       console.error("failed to get local Stream",error);
@@ -145,6 +184,8 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
       setCallStatus("idle");
     }) 
   }
+
+  
 
   const endCall = () => {
     if( localStream ) {
@@ -236,20 +277,29 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
     console.log(receiverId,"receiverId");
     navigator.mediaDevices.getUserMedia({ video: true, audio: true})
     .then((stream) =>{
+      console.log("🚀 ~ .then ~ stream:", stream)
       setLocalStream(stream);
 
       const call = peer?.call(receiverId, stream);
-      console.log("🚀 ~ .then ~ call:", call)
-      call?.on("stream",(remoteStream) => {
+      call?.on("stream",(remoteStream: any) => {
         console.log("::::::::::::::::::::::")
         setRemoteStream(remoteStream);
         setCallStatus("in-call")
+        console.log("🚀 ~ .then ~ call:", call)
       })
+      call.on('error', (err) => {
+  console.error("Call error:", err);
+  setCallStatus("idle");
+
+});
     }).catch((error)=>{
       console.error("failed to get local stream",error);
       setCallStatus("idle");
     })
   }
+
+
+  
 
   const renderSubscriptionMessage = () => {
     if (user.role === 'student') {

@@ -72,14 +72,14 @@ export const VideoCall: React.FC<VideoCallProps> = ({
         </div>
         <div className="mt-4 flex justify-center">
           <div className="flex space-x-6">
-            {/* <button
+            <button
               onClick={toggleMute}
               className={`p-4 rounded-full ${
                 isMuted ? "bg-red-500" : "bg-gray-700"
               } hover:bg-opacity-80 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
             >
               {isMuted ? <IoMicOffOutline size={24} color="white" /> : <IoMicOutline size={24} color="white" />}
-            </button> */}
+            </button>
             <button
               onClick={toggleVideo}
               className={`p-4 rounded-full ${
