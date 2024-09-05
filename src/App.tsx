@@ -59,7 +59,7 @@ import QuestionCreate from "./pages/user/exams/QuestionCreate";
 import ExamUserPage from "./pages/user/exams/ExamUserPage";
 import ExamResultPage from "./pages/user/exams/ExamResultPage";
 import ExamsUser from "./pages/user/exams/ExamsUser";
-import LiveClass from "./pages/liveStream/LiveClass";
+import InstructorLiveClass from "./pages/liveStream/InstructorLiveClass";
 import StudentLiveClass from "./pages/liveStream/StudentLiveClass";
 
 const App: FC = () => {
@@ -192,7 +192,7 @@ const App: FC = () => {
           <Route path="exams/edit/:examId" element={<ExamCreate/>}/>
           <Route path="exams/create/question" element={<QuestionCreate/>}/>
           <Route path="exams/create/question/:examId" element={<QuestionCreate/>}/>
-          <Route path="liveClass" element={<LiveClass/>}/>
+          <Route path="liveClass" element={<InstructorLiveClass/>}/>
         </Route>
 
         {/* STUDENT PAGES */}
