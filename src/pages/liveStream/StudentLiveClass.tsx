@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaPlay, FaStop } from 'react-icons/fa';
+import { FaPlay, FaStop, FaUser } from 'react-icons/fa';
 import { useSocketContext } from '../../context/socketContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
@@ -13,31 +13,42 @@ const StudentLiveClass: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const [hasReceivedTracks, setHasReceivedTracks] = useState(false);
 
-  // useEffect(()=>{
-  //   if(socket){
-
-  //   }
-  // },[socket])
-
   useEffect(() => {
     if (socket) {
+      console.log("Setting up live stream listeners");
+      
+      socket.emit("get-current-live-streams");
+  
+      const handleCurrentLiveStreams = (streams: Array<{ streamId: string; instructorId: string }>) => {
+        console.log("Received current live streams:", streams);
+        setLiveStreams(streams);
+      }
+  
       const handleNewLiveStream = ({ streamId, instructorId }: { streamId: string; instructorId: string }) => {
         console.log("New live stream available - Stream ID:", streamId, "Instructor ID:", instructorId);
         setLiveStreams(prev => [...prev, { streamId, instructorId }]);
       };
-
+  
       const handleLiveStreamEnded = ({ streamId }: { streamId: string }) => {
         console.log("Live stream ended - Stream ID:", streamId);
         setLiveStreams(prev => prev.filter(stream => stream.streamId !== streamId));
         if (currentStreamId === streamId) {
           leaveLiveStream();
+          setCurrentStreamId(null);
+          if (videoRef.current) {
+            videoRef.current.srcObject = null;
+          }
+          setHasReceivedTracks(false);
         }
       };
-
+  
+      socket.on('current-live-streams', handleCurrentLiveStreams);
       socket.on('new-live-stream', handleNewLiveStream);
       socket.on('live-stream-ended', handleLiveStreamEnded);
-
+  
       return () => {
+        console.log("Cleaning up live stream listeners");
+        socket.off('current-live-streams', handleCurrentLiveStreams);
         socket.off('new-live-stream', handleNewLiveStream);
         socket.off('live-stream-ended', handleLiveStreamEnded);
       };
@@ -146,49 +157,67 @@ const StudentLiveClass: React.FC = () => {
     if (peerConnection) {
       peerConnection.close();
       setPeerConnection(null);
-      setCurrentStreamId(null);
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-      setHasReceivedTracks(false);
     }
+    setCurrentStreamId(null);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setHasReceivedTracks(false);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-4">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Student Live Class</h1>
-      <div className="bg-gray-100 rounded-lg overflow-hidden shadow-md">
-        <video 
-          ref={videoRef} 
-          className="w-full h-auto max-h-96 object-contain"
-          autoPlay 
-          playsInline
-        ></video>
-        <div className="p-4">
-          {currentStreamId ? (
+      {currentStreamId ? (
+        <div className="bg-gray-100 rounded-lg overflow-hidden shadow-md">
+          <video 
+            ref={videoRef} 
+            className="w-full h-auto max-h-96 object-contain"
+            autoPlay 
+            playsInline
+          ></video>
+          <div className="p-4">
             <button
               className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
               onClick={leaveLiveStream}
             >
               <FaStop className="mr-2" /> Leave Live Stream
             </button>
-          ) : (
-            <div className="space-y-4">
-              {liveStreams.map(stream => (
-                <div key={stream.streamId} className="bg-white p-4 rounded shadow-md flex justify-between items-center">
-                  <span>Stream ID: {stream.streamId} (Instructor: {stream.instructorId})</span>
-                  <button
-                    className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                    onClick={() => joinLiveStream(stream.streamId)}
-                  >
-                    <FaPlay className="mr-2" /> Join Stream
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      ) : liveStreams.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {liveStreams.map(stream => (
+            <div key={stream.streamId} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="relative pb-2/3">
+                <img 
+                  src={`https://picsum.photos/seed/${stream.streamId}/400/300`} 
+                  alt="Live Stream Thumbnail" 
+                  className="absolute h-full w-full object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <div className="flex items-center mb-2">
+                  <FaUser className="text-gray-500 mr-2" />
+                  <span className="font-semibold text-gray-700">Instructor: {stream.instructorId}</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">Stream ID: {stream.streamId}</p>
+                <button
+                  className="w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                  onClick={() => joinLiveStream(stream.streamId)}
+                >
+                  <FaPlay className="mr-2" /> Join Live Stream
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-gray-600 mt-8">
+          <p>No live streams are currently available.</p>
+          <p>Please check back later or wait for an instructor to start a stream.</p>
+        </div>
+      )}
       {hasReceivedTracks && !videoRef.current?.srcObject && (
         <div className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded">
           Video tracks received but not displaying. Please check your browser console for more information.

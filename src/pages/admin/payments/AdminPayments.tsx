@@ -3,7 +3,7 @@ import CoursePayments from './CoursePayments'
 import SubscriptionPayments from './SubscriptionPayments'
 
 function AdminPayments() {
-  const [ activeTab, setActiveTab ] = useState('course')
+  const [ activeTab, setActiveTab ] = useState('course');
 
   const handleTabClick = (tab:any) => {
     setActiveTab(tab)
