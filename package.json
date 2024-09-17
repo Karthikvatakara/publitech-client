@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "date-and-time": "^3.3.0",
     "dotenv": "^16.4.5",
+    "firebase": "^10.13.1",
     "formik": "^2.4.6",
     "framer-motion": "^11.3.21",
     "jwt-decode": "^4.0.0",

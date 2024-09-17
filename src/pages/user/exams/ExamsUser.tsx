@@ -30,7 +30,14 @@ function ExamsUser() {
     }
 
     if (loading) {
-        return <div className="text-center py-10">Loading...</div>;
+        return <div className="text-center py-10">
+             <Player
+                autoplay
+                loop
+                src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+                style={{ height: '100px', width: '100px' }}
+                />
+        </div>;
     }
 
     if (error) {

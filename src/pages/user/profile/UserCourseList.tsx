@@ -16,7 +16,14 @@ const UserCourseList: React.FC = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="text-center py-10">
+       <Player
+      autoplay
+      loop
+      src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+      style={{ height: '125px', width: '120px' }}
+    />
+    </div>;
   }
 
   if (error) {

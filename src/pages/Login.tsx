@@ -13,6 +13,9 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google"
 import { googleLoginSignup } from "../redux/actions/user/userActions";
+// import axios from "axios";
+// import { URL } from "../common/api";
+// import { config } from "../common/configurations";
 
 const Login = () => {
   const [formData, setFormData] = useState<{ email: string; password: string }>(
@@ -22,10 +25,13 @@ const Login = () => {
   const { user,error } = useSelector((state:RootState)=> state.user);
   const dispatch = useDispatch<AppState>();
   const navigate = useNavigate();
+
   const handleSubmit = async(values:loginFormValues) => {
 
     const result =  await dispatch(loginUser(values));
+    // const result = await axios.post(`${URL}/api/auth/login`,{values},config)
     
+    console.log("🚀 ~ handleSubmit ~ result:", result)
     if(result.meta.requestStatus === "fulfilled"){
       console.log(result);
       toast.success(result?.payload.message);

@@ -8,6 +8,8 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { getUserData } from "./redux/actions/user/userActions";
 import { AppState, RootState } from "./redux/store";
+import axios from "axios";
+import { URL } from "./common/api";
 
 // Components and Pages
 // import Layout from "./components/Layout"; // Import the new Layout component
@@ -61,6 +63,9 @@ import ExamResultPage from "./pages/user/exams/ExamResultPage";
 import ExamsUser from "./pages/user/exams/ExamsUser";
 import InstructorLiveClass from "./pages/liveStream/InstructorLiveClass";
 import StudentLiveClass from "./pages/liveStream/StudentLiveClass";
+import { generateToken, messaging } from "./utils/notification/firebase";
+import { onMessage } from "firebase/messaging";
+import { config } from "./common/configurations";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -72,6 +77,35 @@ const App: FC = () => {
       dispatch(getUserData());
     }
   }, [dispatch, user]);
+
+  
+  // useEffect(() => {
+  //   generateToken();
+  //   onMessage(messaging, (payload) => {
+  //     console.log("🚀 ~ onMessage ~ payload:", payload)
+  //   })
+  // },[])
+
+  useEffect(() => {
+    const storeFcmToken = async() => {
+      try{
+        const token = await generateToken();
+        console.log("🚀 ~ storeFcmToken ~ token:", token)
+        if( token! && user) {
+          console.log("::::::::::::::::::::::::")
+          const response = await axios.post(`${URL}/api/notification/fcmToken`,{ token }, config);
+          
+          console.log("🚀 ~ storeFcmToken ~ response:", response)
+        }
+      }catch(error){
+        console.error("error storing fcm token",error)
+      }
+    }
+    if(user){
+      storeFcmToken();
+    }
+  },[user])
+
 
   const ProtectedRoute: FC<{
     element: React.ReactElement;
@@ -147,6 +181,7 @@ const App: FC = () => {
             />
           }
         >
+           <Route index element={<UserDashBoard />} />
           <Route path="instructors" element={<AdminInstructors />} />
           <Route path="requests" element={<InstructorRequests />} />
           <Route path="construction" element={<UnderConstruction />} />
@@ -170,6 +205,7 @@ const App: FC = () => {
           }
         >
           <Route path="first" element={<First />} />
+          <Route index element={<UserDashBoard />} />
           <Route path="settings" element={<InstructorResetPassword />} />
           <Route path="profile" element={<InstructorProfile />} />
           <Route path="construction" element={<UnderConstruction />} />

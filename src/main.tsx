@@ -25,5 +25,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </GoogleOAuthProvider>
       </ChakraProvider>
     </Provider>
-  </React.StrictMode>,
+   </React.StrictMode> 
 )

@@ -128,29 +128,37 @@ function CourseListingUser() {
         </div>
         </div>
         </div>
-        {loading &&<Player
-                        autoplay
-                        loop
-                        src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
-                        style={{ height: '200px', width: '200px' }}
-                     />} 
-                     
-                     {courseData && courseData.length !== 0 ? (
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-7'>
-                    {courseData.map((course) => (
-                    <Card key={course._id} course={course} />
-                ))}
-                    </div>
-                ) : (
-                <div className='flex justify-center items-center h-[calc(100vh-200px)]'>
-                <Player
-                    autoplay
-                    loop
-                    src="https://lottie.host/f1f86a63-e042-4e92-8f92-8eba70f38a69/2pzqd7M4BA.json"
-                    style={{ height: '250px', width: '250px' }}
-                />
-                </div>
-                )}
+       
+                {loading ? (
+  <div className='flex justify-center items-center h-[calc(100vh-200px)]'>
+    <Player
+      autoplay
+      loop
+      src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+      style={{ height: '100px', width: '100px' }}
+    />
+  </div>
+) : (
+  <>
+    {courseData && courseData.length !== 0 ? (
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-7'>
+        {courseData.map((course) => (
+          <Card key={course._id} course={course} />
+        ))}
+      </div>
+    ) : (
+      <div className='flex justify-center items-center h-[calc(100vh-200px)]'>
+        <Player
+          autoplay
+          loop
+          src="https://lottie.host/f1f86a63-e042-4e92-8f92-8eba70f38a69/2pzqd7M4BA.json"
+          style={{ height: '200px', width: '200px' }}
+        />
+      </div>
+    )}
+  </>
+)}
+
             <div className="flex justify-center mt-4 mb-6">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                     <button

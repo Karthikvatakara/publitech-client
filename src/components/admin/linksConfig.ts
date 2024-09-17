@@ -21,7 +21,7 @@ interface LinkConfig {
 
 export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[]> = {
   admin: [
-    { to: "/", icon: faTachometerAlt, label: "Dashboard" },
+    { to: "/admin", icon: faTachometerAlt, label: "Dashboard" },
     { to: "/admin/instructors", icon: faChalkboardTeacher, label: "Instructors" },
     { to: "/admin/categories", icon: faBook, label: "Categories" },
     { to: "/admin/users", icon: faBook, label: "users" },
@@ -31,13 +31,13 @@ export const linksConfig: Record<'admin' | 'instructor' | 'student', LinkConfig[
     // { to: "/profile", icon: faUser, label: "Profile" },
   ],
   instructor: [
-    { to: "/", icon: faTachometerAlt, label: "Dashboard" },
+    { to: "/instructor", icon: faTachometerAlt, label: "Dashboard" },
     { to: "/instructor/course", icon: faBook, label: "My Courses" },
     // { to: "/instructor/announcements", icon: faClipboard, label: "Announcements" },
     { to: "/instructor/liveClass", icon: faClipboard, label: "LiveClass" },
     { to: "/instructor/exams", icon: faUserGraduate, label: "Exams" },
     { to: "/instructor/messages", icon: faEnvelope, label: "Messages" },
-    { to: "/instructor/settings", icon: faCog, label: "Settings" },
+    // { to: "/instructor/settings", icon: faCog, label: "Settings" },
     { to: "/instructor/profile", icon: faUser, label: "Profile" },
   ],
   student: [

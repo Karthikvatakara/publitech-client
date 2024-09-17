@@ -132,7 +132,7 @@ const InstructorLiveClass: React.FC = () => {
 
   const startLiveStream = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      const mediaStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
         audio: true,
       });
