@@ -8,6 +8,8 @@ import { chatEntity } from '../../interface/chatEntitty';
 import emptyUser from "../../assets/profiles/emptyUser.png";
 import CreateGroupModal from './CreateGroupModal';
 import multipleUser from "../../assets/profiles/multipleUser.png";
+import { Player } from '@lottiefiles/react-lottie-player';
+
 
 interface MyChatsProps {
   selectedChat: chatEntity | null,
@@ -20,6 +22,7 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
   const [chatList, setChatList] = useState<chatEntity[]>([]);
   const [filteredChatList, setFilteredChatList] = useState<chatEntity[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ loading, setLoading ] = useState<boolean>(false)
 
   useEffect(() => {
     getData();
@@ -36,8 +39,10 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
 
   const getData = async() => {
     try {
+      setLoading(true);
       const response = await axios.get(`${URL}/api/chat/chats`, config);
       setChatList(response.data?.data);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
@@ -104,36 +109,48 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
         </div>
       </div>
       <div className="flex-grow overflow-hidden bg-gray-100 rounded-b-lg border-b border-x">
-        <div className="h-full overflow-y-auto p-2 sm:p-3 space-y-2">
-          {filteredChatList.map((chat) => {
-            const otherUser = chat.users.find(u => u._id !== user._id);
-            return (
-              <div 
-                key={chat._id} 
-                className={`cursor-pointer bg-white hover:bg-blue-50 p-2 sm:p-3 rounded-lg transition duration-300 shadow-sm flex items-center ${
-                  selectedChat && selectedChat._id === chat._id ? 'bg-blue-100' : ''
-                }`}
-                onClick={() => onChatSelect(chat)}
-              >
-                <img 
-                  src={chat.isGroupChat ? multipleUser : otherUser?.profile?.avatar || emptyUser} 
-                  alt={chat.isGroupChat ? 'Group' : otherUser?.username} 
-                  className="w-12 h-12 rounded-full mr-3 object-cover"
-                />
-                <div className="flex-grow">
-                  <p className="font-semibold text-sm sm:text-base text-gray-800">
-                    {chat.isGroupChat ? chat.groupName : otherUser?.username}
-                  </p>
-                  <p className="text-xs sm:text-sm truncate text-gray-600">
-                    <span className="font-medium">Last: </span>
-                    {chat.latestMessage ? chat.latestMessage.content : 'No messages yet'}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+  <div className="h-full overflow-y-auto p-2 sm:p-3 space-y-2">
+    {loading ? (
+      <div className="flex justify-center items-center h-full">
+        <Player
+          autoplay
+          loop
+          src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+          style={{ height: '80px', width: '80px' }}
+        />
       </div>
+    ) : (
+      filteredChatList.map((chat) => {
+        const otherUser = chat.users.find(u => u._id !== user._id);
+        return (
+          <div 
+            key={chat._id} 
+            className={`cursor-pointer bg-white hover:bg-blue-50 p-2 sm:p-3 rounded-lg transition duration-300 shadow-sm flex items-center ${
+              selectedChat && selectedChat._id === chat._id ? 'bg-blue-100' : ''
+            }`}
+            onClick={() => onChatSelect(chat)}
+          >
+            <img 
+              src={chat.isGroupChat ? multipleUser : otherUser?.profile?.avatar || emptyUser} 
+              alt={chat.isGroupChat ? 'Group' : otherUser?.username} 
+              className="w-12 h-12 rounded-full mr-3 object-cover"
+            />
+            <div className="flex-grow">
+              <p className="font-semibold text-sm sm:text-base text-gray-800">
+                {chat.isGroupChat ? chat.groupName : otherUser?.username}
+              </p>
+              <p className="text-xs sm:text-sm truncate text-gray-600">
+                <span className="font-medium">Last: </span>
+                {chat.latestMessage ? chat.latestMessage.content : 'No messages yet'}
+              </p>
+            </div>
+          </div>
+        );
+      })
+    )}
+  </div>
+</div>
+
       <CreateGroupModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

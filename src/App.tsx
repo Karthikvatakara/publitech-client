@@ -66,6 +66,8 @@ import StudentLiveClass from "./pages/liveStream/StudentLiveClass";
 import { generateToken, messaging } from "./utils/notification/firebase";
 import { onMessage } from "firebase/messaging";
 import { config } from "./common/configurations";
+import AdminDashboard from "./pages/dashBoard/AdminDashBoard";
+import InstructorDashBoard from "./pages/dashBoard/InstructorDashBorard";
 
 const App: FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.user);
@@ -181,7 +183,7 @@ const App: FC = () => {
             />
           }
         >
-           <Route index element={<UserDashBoard />} />
+           <Route index element={<AdminDashboard />} />
           <Route path="instructors" element={<AdminInstructors />} />
           <Route path="requests" element={<InstructorRequests />} />
           <Route path="construction" element={<UnderConstruction />} />
@@ -205,7 +207,7 @@ const App: FC = () => {
           }
         >
           <Route path="first" element={<First />} />
-          <Route index element={<UserDashBoard />} />
+          <Route index element={<InstructorDashBoard />} />
           <Route path="settings" element={<InstructorResetPassword />} />
           <Route path="profile" element={<InstructorProfile />} />
           <Route path="construction" element={<UnderConstruction />} />

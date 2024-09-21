@@ -4,6 +4,7 @@ import { URL } from '../../common/api';
 import { config } from '../../common/configurations';
 import { subscriptionPaymentEntity } from '../../interface/subscriptionPaymentEntity';
 import Pagination from '../../components/common/Pagination';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 
 function UserSubscriptionPayment() {
@@ -88,7 +89,13 @@ const handlePageChange = ( page: number) => {
       <div className='w-full overflow-x-auto bg-gray-50 rounded-xl p-4 shadow'>
       {loading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          {/* <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div> */}
+          <Player
+          autoplay
+          loop
+          src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+          style={{ height: '115px', width: '110px' }}
+        />
         </div>
       ) : subscriptionData && subscriptionData.length > 0 ? (
         <table className='min-w-full divide-y divide-gray-200'>

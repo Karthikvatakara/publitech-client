@@ -49,11 +49,25 @@ const CourseListPage = () => {
         setStage(e.target.value);
     };
 
-         
-
-    if (error) {
+    if (loading) {
+        return <div className="text-center py-10">
+           <Player
+          autoplay
+          loop
+          src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+          style={{ height: '115px', width: '110px' }}
+        />
+        </div>;
+      }
+    
+      if (error) {
         return <div className="text-center py-10 text-red-500">Error: {error as SerializedError || 'Failed to load courses'}</div>;
-    }
+        }     
+
+
+    // if (error) {
+    //     return <div className="text-center py-10 text-red-500">Error: {error as SerializedError || 'Failed to load courses'}</div>;
+    // }
 
     return (
 
