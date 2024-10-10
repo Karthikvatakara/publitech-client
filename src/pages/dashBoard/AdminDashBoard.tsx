@@ -1,4 +1,3 @@
-import React from 'react';
 import SummaryCards from '../../components/dashBoard/admin/cardSection/SummaryCards';
 import ChartSection from '../../components/dashBoard/admin/chartSection/ChartSection';
 import EnrollmentTable from '../../components/dashBoard/admin/tableSection/EnrollmentTable';

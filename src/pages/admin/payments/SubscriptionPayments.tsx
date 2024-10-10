@@ -2,7 +2,7 @@ import React,{ useEffect, useState } from 'react'
 import axios from 'axios';
 import { URL } from '../../../common/api';
 import { config } from '../../../common/configurations';
-import { subscriptionPaymentEntity } from '../../../interface/subscriptionPaymentEntity';
+import { SubscriptionPaymentEntityPopulated } from '../../../interface/subscriptionPaymentEntityPopulated';
 import Pagination from '../../../components/common/Pagination';
 
 function SubscriptionPayments() {
@@ -10,7 +10,7 @@ function SubscriptionPayments() {
   const [ currentPage, setCurrentPage ] = useState<number>(1);
   const [ selectedStatus, setSelectedStatus ] = useState<string>("all");
   const [ searchTerm, setSearchTerm ] = useState<string>("");
-  const [ subscriptionData , setSubscriptionData ] = useState<subscriptionPaymentEntity[] | null>([]);
+  const [ subscriptionData , setSubscriptionData ] = useState<SubscriptionPaymentEntityPopulated[] | null>([]);
   const [ totalPages, setTotalPages ] = useState<number>(1);
 
 
@@ -103,8 +103,8 @@ const handlePageChange = ( page: number) => {
           </thead>
           <tbody className='bg-white divide-y divide-gray-200'>
             {subscriptionData.map((payment) => (
-              <tr key={payment?._id} className='hover:bg-gray-50'>
-                <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{payment?.participants[0]?.username}</td>
+              <tr key={payment?._id as unknown as string} className='hover:bg-gray-50'>
+                <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{payment?.participants[0]?.username }</td>
                 <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{payment?.participants[1]?.username}</td>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${payment?.status === "pending" || 'failed' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>

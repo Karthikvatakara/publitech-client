@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import  { useState, useEffect } from 'react'
 import { CourseEntity } from '../../../../interface/courseEntity';
 import axios from 'axios';
 import { URL } from '../../../../common/api';
@@ -18,7 +18,6 @@ const  EnrollmentTable = () => {
     try{
     setLoading(true);
     const response = await axios.get(`${URL}/api/course/admin/topEnrollments`,config);
-    console.log("🚀 ~ getData ~ response:table", response)
     setCourseData(response?.data?.data);
     setLoading(false);
     }catch(error){

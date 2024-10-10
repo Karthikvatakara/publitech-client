@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import  { useEffect, useState, useCallback } from 'react';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { CustomVideoFileInput } from '../../../components/common/filesUpload/CustomVideoFileInput';
@@ -13,6 +13,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { URL } from '../../../common/api';
 import { getLocalStorage, removeLocalStorage } from '../../../utils/localStorage';
+import { LessonEntity } from '../../../interface/courseEntity';
+import { FormikHelpers } from 'formik';
 
 const lessonValidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -25,7 +27,7 @@ const lessonValidationSchema = Yup.object().shape({
   })
 });
 
-const initialLesson = {
+const initialLesson: LessonEntity = {
   title: '',
   description: '',
   thumbnail: '',
@@ -37,7 +39,7 @@ function EditLessons() {
   const { id } = useParams();
   const [courseDetails, setCourseDetails] = useState<CourseEntity | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [initialValues, setInitialValues] = useState({ lessons: [initialLesson] });
+  const [initialValues, setInitialValues] = useState<{lessons: [LessonEntity]}>({ lessons: [initialLesson] });
   const dispatch: AppState = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
@@ -67,7 +69,7 @@ function EditLessons() {
     }
   }, [courseDetails]);
 
-  const handleSubmit = async (values: any, actions: any) => {
+  const handleSubmit = async (values:{ lessons: [LessonEntity]}, _actions: FormikHelpers<{ lessons: [LessonEntity]}>) => {
       try {
         console.log("🚀 ~ handleSubmit ~ values:", values)
         
@@ -126,7 +128,7 @@ function EditLessons() {
                           </div>
                           <CustomSinglePdfUpload
                             onChange={(file) => setFieldValue(`lessons.${index}.attachments.url`, file)}
-                            initialValue={values.lessons[index].attachments.url}
+                            initialValue={values.lessons[index] && values.lessons[index].attachments?.url || ''}
                           />
                           <ErrorMessage name={`lessons.${index}.attachments.url`} component="div" className="text-red-500" />
                         </div>

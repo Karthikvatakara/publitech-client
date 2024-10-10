@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import {  useEffect } from "react";
 import loginlaptop from "../assets/loginLaptop.png";
 import publitech from "../assets/publitech.png";
 import InputField from "../components/common/InputField";
@@ -13,27 +13,18 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google"
 import { googleLoginSignup } from "../redux/actions/user/userActions";
-// import axios from "axios";
-// import { URL } from "../common/api";
-// import { config } from "../common/configurations";
+
 
 const Login = () => {
-  const [formData, setFormData] = useState<{ email: string; password: string }>(
-    { email: "", password: "" }
-  );
-
-  const { user,error } = useSelector((state:RootState)=> state.user);
+  const { user } = useSelector((state:RootState)=> state.user);
   const dispatch = useDispatch<AppState>();
   const navigate = useNavigate();
 
   const handleSubmit = async(values:loginFormValues) => {
 
     const result =  await dispatch(loginUser(values));
-    // const result = await axios.post(`${URL}/api/auth/login`,{values},config)
     
-    console.log("🚀 ~ handleSubmit ~ result:", result)
     if(result.meta.requestStatus === "fulfilled"){
-      console.log(result);
       toast.success(result?.payload.message);
       navigate("/");
     }
@@ -57,9 +48,7 @@ const Login = () => {
   }
 
   const loginWithGoogle = async(data:any) => {
-    console.log("🚀 ~ loginWithGoogle ~ data:", data)
     const res = await dispatch(googleLoginSignup(data))
-    console.log("🚀 ~ loginWithGoogle ~ res:", res)
     if(res.meta.requestStatus === "rejected"){
       toast.error("internal server error")
       toast.error(res?.payload);

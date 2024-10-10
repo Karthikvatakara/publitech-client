@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Formik, Form, Field, FormikHelpers, FormikProps, FieldArray, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import InputWithIcon from '../../../components/courses/InputWIthTitle';
 import { FaBook } from 'react-icons/fa';
 import { getActiveCategory } from '../../../redux/actions/category/categoryActions';
@@ -25,6 +24,8 @@ interface CourseUploadFormValues {
     amount: number;
     type: 'free' | 'paid';
   };
+  trial?: boolean; 
+
 }
 
 
@@ -63,7 +64,7 @@ const CreateCourse: React.FC = () => {
   ) => {
     try {
       console.log("Form values before submission:", values);
-      if(courseDetails?.trial){
+      if(courseDetails?.trial ){
         navigate("/instructor/createcourse/uploadtrailer");
       }else{
         await setLocalStorage("tempCourseData", values);
@@ -77,7 +78,7 @@ const CreateCourse: React.FC = () => {
     }
   };
 
-  const handleThumbnailChange = useCallback((file: File | string | null) => {
+  const handleThumbnailChange = useCallback((_file: File | string | null) => {
     // This function will be passed to CustomSingleFileImage
   }, []);
 
@@ -93,7 +94,7 @@ const CreateCourse: React.FC = () => {
         validateOnBlur={true}
         validateOnChange={true}
       >
-        {({ values, isSubmitting, setFieldValue, setFieldTouched, errors, touched }: FormikProps<CourseUploadFormValues>) => (
+        {({ values, isSubmitting, setFieldValue, setFieldTouched }: FormikProps<CourseUploadFormValues>) => (
           <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3 pr-4">

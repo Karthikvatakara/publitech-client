@@ -1,4 +1,3 @@
-import React from 'react';
 import SummaryCardsStudent from '../../../components/dashBoard/student/SummaryCardsStudent';
 import MyEnrollmentsSection from '../../../components/dashBoard/student/MyEnrollmentsSection';
 import { useSelector } from 'react-redux';
@@ -22,12 +21,12 @@ const UserDashBoard = () => {
       <main>
         <SummaryCardsStudent/>
   
-        <LearningStreak />
+        {/* <LearningStreak /> */}
         <MyEnrollmentsSection/>
 
         <section className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Top Performing Categories</h2>
-          <BarChart />
+          {/* <h2 className="text-xl font-semibold mb-4">Top Performing Categories</h2> */}
+          {/* <BarChart /> */}
         </section>
       </main>
     </div>
@@ -36,26 +35,26 @@ const UserDashBoard = () => {
 
 
 
-const LearningStreak = () => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow">
-    <h2 className="text-lg font-semibold mb-2">Your Learning Streak</h2>
-    <div className="flex justify-between">
-      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-        <div key={day} className="flex flex-col items-center">
-          <div className={`w-8 h-8 rounded-full ${index === 4 ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-          <span className="text-xs mt-1">{day}</span>
-        </div>
-      ))}
-    </div>
-    <p className="text-sm mt-2">1 day streak 🔥</p>
-  </div>
-);
+// const LearningStreak = () => (
+//   <div className="bg-gray-100 p-4 rounded-lg shadow">
+//     <h2 className="text-lg font-semibold mb-2">Your Learning Streak</h2>
+//     <div className="flex justify-between">
+//       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+//         <div key={day} className="flex flex-col items-center">
+//           <div className={`w-8 h-8 rounded-full ${index === 4 ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+//           <span className="text-xs mt-1">{day}</span>
+//         </div>
+//       ))}
+//     </div>
+//     <p className="text-sm mt-2">1 day streak 🔥</p>
+//   </div>
+// );
 
-const BarChart = () => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow">
-    {/* Implement bar chart here */}
-    <p>Bar chart placeholder</p>
-  </div>
-);
+// const BarChart = () => (
+//   <div className="bg-gray-100 p-4 rounded-lg shadow">
+//     {/* Implement bar chart here */}
+//     <p>Bar chart placeholder</p>
+//   </div>
+// );
 
 export default UserDashBoard;

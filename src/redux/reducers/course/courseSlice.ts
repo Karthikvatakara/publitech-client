@@ -1,4 +1,4 @@
-import { createSlice,PayloadAction,SerializedError } from "@reduxjs/toolkit";
+import { createSlice,SerializedError } from "@reduxjs/toolkit";
 import { CourseEntity } from "../../../interface/courseEntity";
 import { publishCourse,getAllCourse,getSingleCourse,updateCourse,getAllInstructorCourse } from "../../actions/course/courseActons";
  

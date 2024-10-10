@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import signupRectangle from "../assets/signuprectangle.png";
 import signuplaptop from "../assets/signuplaptop.png";
 import publiTech from "../assets/publitech.png";
@@ -52,10 +52,21 @@ const signupValidationSchema = Yup.object().shape({
 
 
 const Signup: React.FC = () => {
-  const { user ,error } = useSelector((state:RootState)=> state.user);
+  const { user, loading, error } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppState>();
-  const [isOtp,setIsOtp] = useState<boolean>(false);
+  const [isOtp, setIsOtp] = useState<boolean>(false);
   const [tempData,setTempData] = useState<TempData>(temporaryData)
+  const [renderKey, setRenderKey] = useState<number>(0);
+
+
+  useEffect(() => {
+    console.log("User:", user, "Error:", error, "Loading:", loading);
+    if (user && !error && !loading) {
+      setIsOtp(true);
+      setTempData(user);
+      setRenderKey(prevKey => prevKey + 1);
+    }
+  }, [user, error, loading]);
 
   const initialValues: SignupFormValues = {
     username: '',
@@ -72,13 +83,15 @@ const Signup: React.FC = () => {
       
       const result =  await dispatch(signupUser(restValues))
       console.log(result, "formData is by onsubmit");
-      if(result.meta.requestStatus === "fulfilled"){
+      if (result.meta.requestStatus === "fulfilled") {
         toast.success("OTP sent successfully");
-        setTempData(restValues);
-        setIsOtp(!isOtp);
-      }else if(result.meta.requestStatus === "rejected"){
+        setIsOtp(true);
+        setTempData(prevState => ({ ...prevState, ...restValues }));
+        setRenderKey(prevKey => prevKey + 1);
+     }else if(result.meta.requestStatus === "rejected"){
         // toast.error("signup failed")
         toast.error(result?.payload);
+        console.error("Signup failed:", result.payload);
         //  const errorResponse = result.payload as any
           // toast.error(errorResponse?.response?.data.error || "signup failed");
       }
@@ -102,7 +115,7 @@ const Signup: React.FC = () => {
 
       <div className='md:col-span-7 bg-white'>
         {isOtp ?(
-          <OtpComponent userData= {tempData}/>
+          <OtpComponent key={renderKey} userData= {tempData}/>
         ):(
           <>
         <div className='flex flex-col flex-wrap justify-center items-center mt-[80px]'>
@@ -154,9 +167,9 @@ const Signup: React.FC = () => {
                 name="password"
                 icon={
                   <path
-                    fillRule="evenodd"
-                    d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-                    clipRule="evenodd"
+                  fillRule="evenodd"
+                  d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+                  clipRule="evenodd"
                   />
                 }
                 style={{ padding: "20px" }}

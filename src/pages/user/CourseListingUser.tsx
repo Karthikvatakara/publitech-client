@@ -11,7 +11,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { CategoryEntity } from '../../types/categoryEntity';
-
+import CourseCardSkeleton from '../../components/common/skeleton/CourseCardSkeleton';
 
 function CourseListingUser() {
     const [ courseData,setCourseData ] = useState<CourseEntity[] | null>(null)
@@ -129,14 +129,11 @@ function CourseListingUser() {
         </div>
         </div>
        
-                {loading ? (
-  <div className='flex justify-center items-center h-[calc(100vh-200px)]'>
-    <Player
-      autoplay
-      loop
-      src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
-      style={{ height: '100px', width: '100px' }}
-    />
+        {loading ? (
+  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-7'>
+    {Array.from({ length: 6 }).map((_, index) => (
+      <CourseCardSkeleton key={index} />
+    ))}
   </div>
 ) : (
   <>
@@ -158,6 +155,7 @@ function CourseListingUser() {
     )}
   </>
 )}
+
 
             <div className="flex justify-center mt-4 mb-6">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (

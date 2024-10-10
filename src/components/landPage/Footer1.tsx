@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 import logo from "../../assets/publitechwhitelogo.png"
 import { TiSocialTwitterCircular } from "react-icons/ti";

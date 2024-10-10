@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { FaBook, FaRegClock, FaVideo, FaTrophy, FaFileDownload, FaRunning, FaClock } from "react-icons/fa";
 import { IoMdFlash } from "react-icons/io";
 import { RiArticleFill } from "react-icons/ri";
@@ -11,15 +11,18 @@ import { getSingleCourse } from "../../redux/actions/course/courseActons";
 import axios from "axios";
 import { URL } from "../../common/api";
 import { config } from "../../common/configurations";
+import { SingleCourseEntity } from "../../interface/SingleCourseEntity";
+import UserCourseDetailSkeleton from "../../components/dashBoard/student/UserCourseDetailSkeleton";
 
 function CourseDetailsAdmin() {
-    const [courseData, setCourseData] = useState<any | null>(null);
+    const [courseData, setCourseData] = useState<SingleCourseEntity | null>(null);
     const [actionTaken, setActionTaken] = useState(false);
     const { courseId } = useParams<{ courseId: string }>();
-    const [openLesson, setOpenLesson] = useState(null);
+    const [openLesson, setOpenLesson] = useState<number | null>(null);
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [ rejectionError,setRejectionError ] = useState('')
+    const [ loading, setLoading ] = useState<boolean>(false);
     const dispatch = useDispatch<AppState>();
 
     useEffect(() => {
@@ -28,13 +31,21 @@ function CourseDetailsAdmin() {
         }
     }, [dispatch, courseId, actionTaken]);
 
+
     const getData = async (courseId: string) => {
-        console.log("🚀 ~ getData ~ courseId:", courseId);
+      try{
+        setLoading(true);
         const res = await dispatch(getSingleCourse(courseId));
-        console.log("🚀 ~ getData ~ res:", res);
         if (res?.payload?.success) {
+            setLoading(false)
             setCourseData(res?.payload?.data);
         }
+      }catch(error){
+        setLoading(false);  
+        console.error(error,"error in the getdata")
+      }finally{
+        setLoading(false);
+      }
     };
 
     const handleCourseAction = async (action: "accepted" |"rejected") => {
@@ -43,11 +54,9 @@ function CourseDetailsAdmin() {
         } else {
             try {
               const updatedCourseData = { ...courseData, isVerified: true, stage: "accepted", isPublished: true };
-              console.log("🚀 ~ handleCourseAction ~ updatedCourseData:", updatedCourseData)
               
                 const response = await axios.put(`${URL}/api/course/update-course/${courseId}`,  updatedCourseData , config);
                 
-                console.log("🚀 ~ handleCourseAction ~ response:", response)
                 if (response.data.success) {
                     setActionTaken(true);
                 } else {
@@ -91,6 +100,10 @@ function CourseDetailsAdmin() {
     const coursePrice = courseData?.pricing?.amount == 0 ? "free" : `₹ ${courseData?.pricing?.amount}`;
 
     return (
+        <>
+        { loading ? (
+            <UserCourseDetailSkeleton/>
+        ):(
         <div className="w-full grid grid-cols-12 gap-4 p-4">
             <div className="col-span-12 md:col-span-8 bg-gray-100 rounded-md p-4">
                 <div className="flex flex-col">
@@ -316,6 +329,8 @@ function CourseDetailsAdmin() {
                 </div>
             )}
         </div>
+         )}
+        </>
     );
 }
 

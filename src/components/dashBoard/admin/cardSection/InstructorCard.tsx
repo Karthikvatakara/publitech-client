@@ -1,4 +1,3 @@
-import React from 'react'
 
 
 function InstructorCard({ data }: { data: number}) {

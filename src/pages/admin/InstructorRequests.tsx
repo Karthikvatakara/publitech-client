@@ -9,12 +9,12 @@ import InstructorDetailsModal from '../../components/common/instructorDetailsMod
 
 const InstructorRequests: FC = () => {
   const dispatch = useDispatch<AppState>();
-  const { instructors, totalPages, currentPage, loading } = useSelector((state: RootState) => state.instructors);
+  const { instructors, totalPages, currentPage } = useSelector((state: RootState) => state.instructors);
   const [selectedInstructor, setSelectedInstructor] = useState<any>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [limit, setLimit] = useState<number>(5);
+const limit = 5;
 
   useEffect(() => {
     getInstructorData();

@@ -1,28 +1,28 @@
-import React,{ useEffect,useState } from "react";
+import { useEffect,useState } from "react";
 import { FaBook, FaRegClock, FaVideo, FaTrophy, FaFileDownload, FaRunning, FaClock } from "react-icons/fa";
 import { IoMdFlash } from "react-icons/io";
 import { RiArticleFill } from "react-icons/ri";
 import { GiLaptop } from "react-icons/gi";
 import { PiStudentBold } from "react-icons/pi";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState,AppState } from "../../../redux/store";
+import { AppState } from "../../../redux/store";
 import { getSingleCourse } from "../../../redux/actions/course/courseActons";
 import { useDispatch } from "react-redux";
-import { CourseEntity } from "../../../interface/courseEntity";
 import { useNavigate } from "react-router-dom";
-
+import { CoursePopulated } from "../../../interface/coursePopulated";
+import { LessonEntity } from "../../../interface/coursePopulated";
+import UserCourseDetailSkeleton from "../../../components/dashBoard/student/UserCourseDetailSkeleton";
 
 function CourseDetailPage() {
-    const [ courseData,setCourseData ] = useState<any | null>(null);
+    const [ courseData,setCourseData ] = useState<CoursePopulated | null>(null);
     const { courseId } = useParams< {courseId: string} >();
-    const [openLesson, setOpenLesson] = useState(null);
+    const [openLesson, setOpenLesson] = useState<number | null>(null);
     const [ isModalOpen,setIsModalOpen ]=  useState<boolean>(false);
+    const [ loading, setLoading ] = useState<boolean>(false);
     const navigate = useNavigate();
     console.log("🚀 ~ CourseDetailPage ~ courseId:", courseId)
     
     const dispatch = useDispatch<AppState>();
-    // const { course } = useSelector((state:RootState)=> state.courses)
 
     useEffect(() => {
       console.log('this is coursesd',courseId)
@@ -31,24 +31,33 @@ function CourseDetailPage() {
         }
     },[dispatch,courseId])
     
+
     const getData = async(courseId:string) => {
+      try{
+        setLoading(true);
       console.log("🚀 ~ getData ~ courseId:", courseId)
       const res =  await dispatch(getSingleCourse(courseId)); 
       console.log("🚀 ~ getData ~ res:", res)
       if(res?.payload?.success){
+        setLoading(false)
         setCourseData(res?.payload?.data)
       }
-      
+      }catch(error){
+        setLoading(false);
+        console.error(error,"error in the getdata")
+      }finally{
+        setLoading(false);
+      }
     }
 
     const updateCourse = async() => {
       console.log(courseData?.stage,"stage in course");
       console.log(courseData?.isVerified,"isverified in ocurseData");
-    console.log(courseData.isPublished,"isPublished incourseData")
+    console.log(courseData?.isPublished,"isPublished incourseData")
       if(courseData?.stage ==="accepted" && courseData?.isVerified ){
         setIsModalOpen(true)
       }else{
-        navigate(`/instructor/course/edit/${courseData._id}`)
+        navigate(`/instructor/course/edit/${courseData?._id}`)
       }
     }
 
@@ -56,6 +65,10 @@ function CourseDetailPage() {
 
 
   return (
+    <>
+    { loading ? (
+      <UserCourseDetailSkeleton/>
+    ): (
     <div className="w-full grid grid-cols-12 gap-4 p-4">
       <div className="col-span-12 md:col-span-8 bg-gray-100 rounded-md p-4">
         <div className="flex flex-col">
@@ -93,7 +106,7 @@ function CourseDetailPage() {
             <h1 className="font-bold">What You Will Learn</h1>
             <ul className="list-disc list-inside">
               {courseData?.whatWillLearn && courseData?.whatWillLearn?.length > 0 ? (
-              courseData?.whatWillLearn?.map((item: any, index: number) => (
+              courseData?.whatWillLearn?.map((item: string, index: number) => (
               <li key={index}>{item}</li>
               ))
               ) : (
@@ -136,7 +149,7 @@ function CourseDetailPage() {
             </div>
           </div>
           <div className="border-2 m-2 rounded-md">
-  {courseData?.lessons?.map((lesson:any, index:any) => (
+  {courseData?.lessons?.map((lesson:LessonEntity, index:number) => (
     <div key={index} className="collapse collapse-plus bg-base-200 mb-2">
       <input 
         type="checkbox" 
@@ -254,6 +267,8 @@ function CourseDetailPage() {
                 </div>
             )}
     </div>
+     )}
+    </>
   );
 }
 

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publitech-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: publitech-client
+  template:
+    metadata:
+      labels:
+        app: publitech-client
+    spec:
+      containers:
+      - name: publitech-client
+        image: karthik496/publitech-frontend:latest
+        envFrom:
+        - configMapRef:
+            name: client-config 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: publitech-client
+spec:
+  selector:
+    app: publitech-client
+  ports:
+  - protocol: TCP
+    port: 5173
+    targetPort: 5173

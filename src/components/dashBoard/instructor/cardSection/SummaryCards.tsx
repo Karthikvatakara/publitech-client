@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import InstrucorDashboardCard from './InstrucorDashboardCard'
 import axios from 'axios';
 import { URL } from '../../../../common/api';
@@ -24,9 +24,6 @@ function SummaryCards() {
             axios.get(`${URL}/api/course/instructor/noOfStudentsPurchased`,config),
             axios.get(`${URL}/api/payment//instructor/totalPayment`,config)
           ]);
-          console.log("🚀 ~ fetchData ~ courseResonse:", courseResponse)
-          console.log("🚀 ~ fetchData ~ revenueResponse:", revenueResopnse)
-          console.log("🚀 ~ fetchData ~ studentResponse:", studentResponse)
     
           setCardData({
             courseData: courseResponse?.data?.data,

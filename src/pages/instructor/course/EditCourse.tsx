@@ -46,7 +46,7 @@ const CourseUploadSchema = Yup.object().shape({
   ).min(1, 'Add at least one learning point'),
   pricing: Yup.object().shape({
     amount: Yup.number().when('type', {
-      is: (type) => type === 'paid',
+      is: (type: string) => type === 'paid',
       then: () => Yup.number().min(0, 'Price must be non-negative').required('Price is required for paid courses'),
       otherwise: () => Yup.number().equals([0], 'Price must be 0 for free courses'),
     }),
@@ -115,7 +115,7 @@ const EditCourse: React.FC = () => {
     }
   };
 
-  const handleThumbnailChange = useCallback((file: File | string | null) => {
+  const handleThumbnailChange = useCallback((_file: File | string | null) => {
     // This function will be passed to CustomSingleFileImage
   }, []);
 

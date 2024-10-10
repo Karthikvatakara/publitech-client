@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Field, ErrorMessage } from "formik";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-const PasswordInputWithIcon = ({ title, name, icon, placeholder, canEdit }) => {
+
+const PasswordInputWithIcon = ({ title, name, icon, placeholder, canEdit }:{ title:string, name: string, icon: string, placeholder: string, canEdit: string}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePassword = () => {

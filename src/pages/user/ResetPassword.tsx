@@ -1,4 +1,4 @@
-import React,{ FC, useState } from 'react'
+import { FC, useState } from 'react'
 import resetPassword from "../../assets/updatePassword/resetPassword.png"
 import { Formik,Form } from 'formik'
 import PasswordInputField from '../../components/common/PasswordInputField'

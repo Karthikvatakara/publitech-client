@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEvent, useEffect } from "react";
+import React, { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
 import { ImageUploadIcon } from "./ImageUploadIcon";
 import ImageUpload from "../../../lib/utility/ImageUpload";
 import toast from "react-hot-toast";
@@ -12,8 +12,8 @@ interface CustomSingleFileInputProps {
 const CustomSingleFileImage: React.FC<CustomSingleFileInputProps> = ({
   onChange,
   initialValue,
+  
 }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialValue || null);
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,15 +53,14 @@ const CustomSingleFileImage: React.FC<CustomSingleFileInputProps> = ({
   };
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
+    const file = e.target.files?.[0]; // Optional chaining
     if (file) {
       await handleFileUpload(file);
     }
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = useCallback(async (file: File) => {
     setLoading(true);
-    setSelectedFile(file);
     try {
       const imgUrl = await ImageUpload(file);
       if (!imgUrl) {
@@ -75,10 +74,9 @@ const CustomSingleFileImage: React.FC<CustomSingleFileInputProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [onChange]);
 
   const handleClearFile = () => {
-    setSelectedFile(null);
     setPreviewUrl(null);
     onChange(null);
   };
@@ -91,6 +89,8 @@ const CustomSingleFileImage: React.FC<CustomSingleFileInputProps> = ({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      role="button" // Make the drop area accessible
+      aria-label="Drag and drop an image here, or click to upload" // Add an aria label
     >
       {previewUrl ? (
         <div className="mt-4 lg:mt-0 relative">

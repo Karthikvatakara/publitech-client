@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { CategoryEntity } from '../../types/categoryEntity';
 import axios from 'axios';
 import { URL } from '../../common/api';
@@ -6,17 +6,15 @@ import { config } from '../../common/configurations';
 import { TbListDetails } from "react-icons/tb";
 import ModalComponent from '../../components/common/modals/ModalComponent';
 import AddCategoryForm from './AddCategoryFormModal';
-import { ClipLoader } from 'react-spinners'; 
 import CategoryEditModal from './CategoryEditModal';
 import ConfirmationModal from '../../components/common/modals/ConfirmationModal';
-import { useNavigate } from 'react-router-dom';
-import { getUserData } from '../../redux/actions/user/userActions';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 function Categories() {
   const [categoriesData, setCategoriesData] = useState<CategoryEntity[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [addCategoryModal, setAddCategoryModal] = useState<boolean>(false);
-  // const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [actionModal, setActionModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryEntity | null>(null);
   const [ blockModal,setBlockModal ] = useState<boolean>(false);
@@ -28,14 +26,14 @@ function Categories() {
 
   const getCategoriesData = async () => {
     try {
-      // setLoading(true);
+      setLoading(true);
       const response = await axios.get(`${URL}/api/course/admin/category`, config);
       setCategoriesData(response?.data.data);
-      // setLoading(false);
+      setLoading(false);
     } catch (error) {
       console.error(error, "error occurred");
       // setError("error fetching data");
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -75,10 +73,21 @@ function Categories() {
       if(selectedCategory){
         const id = selectedCategory._id
         const data = { id,action }
+        setLoading(true)
         const response  = await axios.post(`${URL}/api/course/admin/category/status`,  data  ,config)
+        console.log("🚀 ~ instructorStatusChange ~ response:", response)
+        setCategoriesData((prevCategories)=> 
+          prevCategories.map((category) => 
+            category._id === selectedCategory._id ? (
+              { ...category, isBlocked: action === "block"}
+            ):(
+              category
+            )
+          )
+        );
+
         setBlockModal(false);
-        getCategoriesData()
-        // navigate('/admin/categories')
+        setLoading(false);
       }
     }catch(error){
       setError("failed to update instructor data")
@@ -87,9 +96,14 @@ function Categories() {
 
   return (
     <div className="w-full p-4">
-      {/* {loading ? (
-        <ClipLoader size={35} color={"#123abc"} loading={loading} />
-      ) : ( */}
+      {loading ? (
+           <Player
+           autoplay
+           loop
+           src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+           style={{ height: '120px', width: '120px' }}
+        />
+      ) : (
         <>
           {addCategoryModal && (
             <ModalComponent tab={<AddCategoryForm onClose={closeModal} getData={getCategoriesData} />} />
@@ -144,8 +158,8 @@ function Categories() {
           </div>
           {error && <p className="text-red-500">{error}</p>}
         </>
-      {/* ) */}
-      {/* } */}
+       ) 
+      }
       <ConfirmationModal
         show={blockModal}
         message={`Are you sure you want to ${modalAction} this instructor?`}

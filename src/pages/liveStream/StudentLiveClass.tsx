@@ -3,9 +3,21 @@ import { FaPlay, FaStop, FaUser } from 'react-icons/fa';
 import { useSocketContext } from '../../context/socketContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import axios from 'axios';
+import { URL } from '../../common/api';
+import { config } from '../../common/configurations';
+import { Player } from '@lottiefiles/react-lottie-player';
+
+
+interface LiveStream {
+  streamId: string;
+  instructorId: string;
+  timestamp: number;
+}
 
 const StudentLiveClass: React.FC = () => {
-  const [liveStreams, setLiveStreams] = useState<Array<{ streamId: string; instructorId: string }>>([]);
+  const [liveStreams, setLiveStreams] = useState<LiveStream[]>([]);
+  const [instructorUsernames, setInstructorUsernames] = useState<{[key: string]: string}>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentStreamId, setCurrentStreamId] = useState<string | null>(null);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
@@ -19,14 +31,14 @@ const StudentLiveClass: React.FC = () => {
       
       socket.emit("get-current-live-streams");
   
-      const handleCurrentLiveStreams = (streams: Array<{ streamId: string; instructorId: string }>) => {
+      const handleCurrentLiveStreams = (streams: LiveStream[]) => {
         console.log("Received current live streams:", streams);
         setLiveStreams(streams);
       }
   
-      const handleNewLiveStream = ({ streamId, instructorId }: { streamId: string; instructorId: string }) => {
+      const handleNewLiveStream = ({ streamId, instructorId, timestamp }: LiveStream) => {
         console.log("New live stream available - Stream ID:", streamId, "Instructor ID:", instructorId);
-        setLiveStreams(prev => [...prev, { streamId, instructorId }]);
+        setLiveStreams(prev => [...prev, { streamId, instructorId, timestamp }]);
       };
   
       const handleLiveStreamEnded = ({ streamId }: { streamId: string }) => {
@@ -34,11 +46,6 @@ const StudentLiveClass: React.FC = () => {
         setLiveStreams(prev => prev.filter(stream => stream.streamId !== streamId));
         if (currentStreamId === streamId) {
           leaveLiveStream();
-          setCurrentStreamId(null);
-          if (videoRef.current) {
-            videoRef.current.srcObject = null;
-          }
-          setHasReceivedTracks(false);
         }
       };
   
@@ -54,6 +61,17 @@ const StudentLiveClass: React.FC = () => {
       };
     }
   }, [socket, currentStreamId]);
+
+  useEffect(() => {
+    const filterOldStreams = () => {
+      const currentTime = Date.now();
+      const streamTimeout = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+      setLiveStreams(prev => prev.filter(stream => currentTime - stream.timestamp < streamTimeout));
+    };
+
+    const interval = setInterval(filterOldStreams, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (socket && currentStreamId) {
@@ -146,6 +164,14 @@ const StudentLiveClass: React.FC = () => {
     }
   }, [socket, peerConnection, currentStreamId]);
 
+  useEffect(() => {
+    liveStreams.forEach(stream => {
+      if (!instructorUsernames[stream.instructorId]) {
+        getUserData(stream.instructorId);
+      }
+    });
+  }, [liveStreams]);
+
   const joinLiveStream = (streamId: string) => {
     console.log("Joining live stream - Stream ID:", streamId);
     setCurrentStreamId(streamId);
@@ -165,9 +191,21 @@ const StudentLiveClass: React.FC = () => {
     setHasReceivedTracks(false);
   };
 
+  const getUserData = async (instructorId: string) => {
+    try {
+      const response = await axios.post(`${URL}/api/auth/student/instructor`, { instructorId }, config);
+      console.log("🚀 ~ getUserData ~ response:", response);
+      
+      // Assuming the response.data.username contains the instructor's username
+      setInstructorUsernames(prev => ({...prev, [instructorId]: response?.data?.data?.username}));
+    } catch (error) {
+      console.error("Error fetching instructor data:", error);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Student Live Class</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Live Classes</h1>
       {currentStreamId ? (
         <div className="bg-gray-100 rounded-lg overflow-hidden shadow-md">
           <video 
@@ -189,19 +227,27 @@ const StudentLiveClass: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {liveStreams.map(stream => (
             <div key={stream.streamId} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative pb-2/3">
-                <img 
-                  src={`https://picsum.photos/seed/${stream.streamId}/400/300`} 
-                  alt="Live Stream Thumbnail" 
-                  className="absolute h-full w-full object-cover"
-                />
-              </div>
+              <div className="relative h-48">
+  <img 
+    src="https://cdn.prod.website-files.com/63c8f2a5e7a1f60637888f3f/6413e4118a614375f0f2d8aa_blog-livestream-guide.webp"
+    alt="Live Stream Thumbnail" 
+    className="absolute inset-0 h-full w-full object-cover"
+  />
+</div>
               <div className="p-4">
                 <div className="flex items-center mb-2">
                   <FaUser className="text-gray-500 mr-2" />
-                  <span className="font-semibold text-gray-700">Instructor: {stream.instructorId}</span>
+                  <span className="font-semibold text-gray-700">
+                    Instructor: {instructorUsernames[stream.instructorId] || 
+                          <Player
+                          autoplay
+                          loop
+                          src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+                          style={{ height: '60px', width: '60px' }}
+                    />}
+                  </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-4">Stream ID: {stream.streamId}</p>
+                {/* <p className="text-sm text-gray-600 mb-4">Stream ID: {stream.streamId}</p> */}
                 <button
                   className="w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
                   onClick={() => joinLiveStream(stream.streamId)}

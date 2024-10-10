@@ -1,4 +1,3 @@
-import React from 'react';
 import SummaryCards from '../../components/dashBoard/instructor/cardSection/SummaryCards';
 import CourseCards from '../../components/dashBoard/instructor/secondSection.tsx/CourseCards';
 import { useNavigate } from 'react-router-dom';

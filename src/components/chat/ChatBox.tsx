@@ -16,9 +16,11 @@ import Peer from "peerjs";
 import { IoVideocam } from "react-icons/io5";
 import { VideoCall } from './VideoCall';
 import CallNotification from './CallNotification';
+import { getUserChatEntity } from '../../interface/getUserChatEntity';
+import { UserEntity } from '../../interface/UserEntity';
 
 interface ChatboxProps {
-  selectedChat: any | null;
+  selectedChat: getUserChatEntity | null;
   onBackClick?: () => void;
 }
 
@@ -52,7 +54,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [ localPeerId, setLocalPeerId ] = useState<string>("");
-  const [ peer, setPeer ] = useState<peer | null>(null);
+  const [ peer, setPeer ] = useState<Peer | null>(null);
   const [ localStream, setLocalStream ] = useState<MediaStream | null>(null);
   const [ remoteStream, setRemoteStream ] = useState<MediaStream | null>(null);
   const [ callStatus, setCallStatus ] = useState<"idle" | "calling" | "in-call">("idle")
@@ -115,8 +117,8 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
     if (socket && selectedChat) {
       socket.emit("join chat", selectedChat._id);
 
-      const handleMessageReceived = (message: messageEntity) => {
-        if (selectedChat && message?.chatId?._id === selectedChat._id) {
+      const handleMessageReceived = (message: any) => {
+        if (selectedChat && message?.chatId?._id  === selectedChat._id) {
           setMessages((prevMessages) => {
             const messageExists = prevMessages.some(m => m._id === message._id);
             if (!messageExists) {
@@ -173,7 +175,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
         console.log("🚀 ~ .then ~ call:", call)
       })
 
-      call.on('error', (err) => {
+      call?.on('error', (err: Error) => {
         console.error("Call error:", err);
       });
     })
@@ -200,7 +202,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
 
   const handleSubscriptionSubmit = () => {
     console.log("aaaaaaaaaa");
-    navigate(`/student/subscription/${selectedChat._id}`)
+    navigate(`/student/subscription/${selectedChat?._id}`)
   }
 
   useEffect(() => {
@@ -287,7 +289,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
         setCallStatus("in-call")
         console.log("🚀 ~ .then ~ call:", call)
       })
-      call.on('error', (err) => {
+      call?.on('error', (err) => {
   console.error("Call error:", err);
   setCallStatus("idle");
 
@@ -352,8 +354,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
     );
   }
 
-  const otherUser = selectedChat.users.find((u) => u._id !== user._id);
-
+  const otherUser: UserEntity | undefined = selectedChat.users.find((u) => u._id !== user._id) as UserEntity | undefined;
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] sm:h-[calc(100vh-4rem)] m-2 sm:m-4 bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Chat Header */}
@@ -390,12 +391,14 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
             {selectedChat.isGroupChat ? selectedChat.groupName : otherUser?.username}
           </h2>
           <p className="text-sm text-gray-500">
-            {selectedChat.isGroupChat 
-              ? `${selectedChat.users.length} members` 
-              : isUserOnline(otherUser?._id) 
-                ? 'Online' 
-                : 'Offline'}
-          </p>
+  {selectedChat.isGroupChat 
+    ? `${selectedChat.users.length} members` 
+    : otherUser && otherUser._id
+      ? isUserOnline(otherUser._id.toString())
+        ? 'Online' 
+        : 'Offline'
+      : 'Unknown'}
+</p>
           </div>
         </div>
         <IoVideocam size={30} className='m-4' onClick={() => 
@@ -407,6 +410,12 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
         renderSubscriptionMessage()
       ) : (
         <div className="flex-grow overflow-y-auto p-4 space-y-4">
+          {callError && (
+          <div className="bg-red-500 text-white p-2 text-center">
+          {callError}
+         </div>
+        )}
+
           {isLoading ? (
             <Player
               autoplay
@@ -416,7 +425,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
             />
           ) : (
             messages.map((msg) => (
-              <Message key={msg._id} message={msg} isCurrentUser={msg.sender._id === user._id} />
+              <Message key={msg._id.toString()} message={msg} isCurrentUser={msg.sender._id === user._id} />
             ))
           )}
           <div ref={messagesEndRef} />

@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react'
+import { useEffect } from 'react'
 import student from "../../assets/applyToTeach/student.png"
 import patternapplyToTeach from "../../assets/applyToTeach/PatternapplyToTeach.png"
 import { Link } from 'react-router-dom'

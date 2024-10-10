@@ -7,10 +7,8 @@ import {
   faUserGraduate, 
   faEnvelope, 
   faUser, 
-  faCog,
   faGraduationCap,
   faCalendarAlt,
-  faCertificate
 } from '@fortawesome/free-solid-svg-icons';
 
 interface LinkConfig {

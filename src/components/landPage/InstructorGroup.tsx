@@ -1,4 +1,3 @@
-import React from 'react'
 import instructor1 from "../../assets/instructors/360_F_584652599_s89lyUhPSMfX5YsRlKsa1AglJT7vNioO.jpg"
 import instructor2 from "../../assets/instructors/download (2).jpeg"
 import instructor3 from "../../assets/instructors/download (3).jpeg"

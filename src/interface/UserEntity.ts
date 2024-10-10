@@ -42,7 +42,7 @@ export interface UserEntity {
     isVerified: boolean;
     createdAt?: Date;
     updatedAt?: Date;
-    proffesion?: string;
+    profession?: string;
     profileDescription?: string;
     approved?: string;
     stage?: string;

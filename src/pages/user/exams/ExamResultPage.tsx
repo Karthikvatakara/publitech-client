@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { URL } from '../../../common/api';
 import { config } from '../../../common/configurations';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { useNavigate } from 'react-router-dom';
+import { ExamResultEntity } from '../../../interface/ExamResultEntity';
 
 function ExamResultPage() {
     const { resultId } = useParams();
-    const [examResult, setExamResult] = useState<any>(null);
+    const [examResult, setExamResult] = useState<ExamResultEntity | null>(null);
     const [certificateUrl, setCertificateUrl] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,7 +23,7 @@ function ExamResultPage() {
             if (examResult?.assessmentRef?.courseId) {
                 navigate(`/student/courses/preview/${examResult?.assessmentRef?.courseId}`);
             } else {
-                navigate('/student/courses'); // Fallback to course list if courseId is not available
+                navigate('/student/exams'); // Fallback to course list if courseId is not available
             }
         };
 

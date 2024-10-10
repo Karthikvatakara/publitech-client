@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import  { FC } from 'react'
 import { GridLoader } from 'react-spinners'
 
 const LoadingSpinner:FC = ()=> {
@@ -6,7 +6,7 @@ const LoadingSpinner:FC = ()=> {
     <div className='min-h-screen w-full bg-white flex justify-center items-center'>
      <GridLoader
         color="#300370"
-        size={22}
+        size={20}
     />
     </div>
   )

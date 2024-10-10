@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import  { useEffect } from 'react'
 import discussion from "../../assets/applyToTeach/young-tender-curly-girl-holding-documents.png"
 import TypeWriterAnimation from '../common/TypeWriterAnimati/TypeWriterAnimation'
 import AOS from 'aos';

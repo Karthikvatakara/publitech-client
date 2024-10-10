@@ -132,7 +132,7 @@ const InstructorLiveClass: React.FC = () => {
 
   const startLiveStream = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia({
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
@@ -179,7 +179,7 @@ const InstructorLiveClass: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Instructor Live Class</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">create Live Class</h1>
       <div className="bg-gray-100 rounded-lg overflow-hidden shadow-md">
         <video 
           ref={videoRef} 

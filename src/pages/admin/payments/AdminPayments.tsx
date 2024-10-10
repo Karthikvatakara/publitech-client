@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import CoursePayments from './CoursePayments'
 import SubscriptionPayments from './SubscriptionPayments'
 

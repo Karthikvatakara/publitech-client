@@ -19,9 +19,11 @@ const userSlice = createSlice({
                 state.loading = true;
             })
             .addCase(signupUser.fulfilled,(state, { payload }) => {
-                state.loading = false,
-                state.user = payload.data;
-                state.error = null
+                state.loading = false;
+                if (payload && payload.data) {
+                    state.user = payload.data;
+                } 
+                state.error = null;
             }).addCase(signupUser.rejected,(state, { payload }) => {
                 state.loading = false,
                 state.user = null,
@@ -29,18 +31,41 @@ const userSlice = createSlice({
             })
 
             // getUserData
-            .addCase(getUserData.pending,(state) => {
+            // .addCase(getUserData.pending,(state) => {
+            //     state.loading = true;
+            // })
+            // .addCase(getUserData.fulfilled,(state,{payload}) => {
+            //     state.loading = false;
+            //     state.user = payload.data;
+            //     state.error = null;
+            // })
+            // .addCase(getUserData.rejected,(state,{payload}) => {
+            //     state.loading = false;
+            //     state.user = null;
+            //     state.error = payload;
+            // })
+
+            // getUserData
+            .addCase(getUserData.pending, (state) => {
                 state.loading = true;
-            })
-            .addCase(getUserData.fulfilled,(state,{payload}) => {
-                state.loading = false;
-                state.user = payload.data;
-                state.error = null;
-            })
-            .addCase(getUserData.rejected,(state,{payload}) => {
-                state.loading = false;
+                })
+            .addCase(getUserData.fulfilled, (state, { payload }) => {
+                 state.loading = false;
+                 if (payload && payload.data) {
+                 state.user = payload.data;
+                } else {
                 state.user = null;
-                state.error = payload;
+                 }
+                state.error = null;
+                })
+            .addCase(getUserData.rejected, (state, { payload }) => {
+            state.loading = false;
+            state.user = null;
+        if (payload && typeof payload === 'object' && 'message' in payload) {
+        state.error = payload.message === "Authentication required. no user provided" ? null : payload;
+            } else {
+            state.error = payload;
+        }
             })
 
             //login

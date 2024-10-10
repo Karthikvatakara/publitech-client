@@ -20,7 +20,7 @@ const Layout: React.FC<SidebarProps> = ({ role }) => {
   const dispatch = useDispatch<AppState>();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const user: any = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
 
   const handleLogout = () => {
     dispatch(logout());

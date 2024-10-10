@@ -18,13 +18,13 @@ function OtpComponent({ userData }: { userData: TempData }) {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [errors, setError] = useState<string>("");
+    // const [errors, setError] = useState<string>("");
     const [otp1, setOtp1] = useState<string>("");
     const [otp2, setOtp2] = useState<string>("");
     const [otp3, setOtp3] = useState<string>("");
     const [otp4, setOtp4] = useState<string>("");
     const [countdown, setCountdown] = useState<number>(120);
-    const [focusedInput, setFocusedInput] = useState<number>(0);
+    // const [focusedInput, setFocusedInput] = useState<number>(0);
     const [showResend, setShowResend] = useState<boolean>(false);
 
     const inputRefs = [
@@ -179,7 +179,7 @@ function OtpComponent({ userData }: { userData: TempData }) {
                                     name={`otp-${index + 1}`}
                                     id={`otp-${index + 1}`}
                                     value={otp}
-                                    onFocus={() => setFocusedInput(index)}
+                                    // onFocus={() => setFocusedInput(index)}
                                     onChange={(e) =>
                                         handleOtpChange(index + 1, e.target.value)
                                     }

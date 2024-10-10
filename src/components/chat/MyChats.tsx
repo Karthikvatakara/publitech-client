@@ -4,23 +4,23 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { config } from '../../common/configurations';
 import { URL } from '../../common/api';
-import { chatEntity } from '../../interface/chatEntitty';
+// import { chatEntity } from '../../interface/chatEntitty';
 import emptyUser from "../../assets/profiles/emptyUser.png";
 import CreateGroupModal from './CreateGroupModal';
 import multipleUser from "../../assets/profiles/multipleUser.png";
 import { Player } from '@lottiefiles/react-lottie-player';
-
+import { getUserChatEntity } from '../../interface/getUserChatEntity';
 
 interface MyChatsProps {
-  selectedChat: chatEntity | null,
-  onChatSelect: (chat: chatEntity | null) => void;
+  selectedChat: getUserChatEntity | null,
+  onChatSelect: (chat: getUserChatEntity | null) => void;
 }
 
 const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useSelector((state: RootState) => state.user);
-  const [chatList, setChatList] = useState<chatEntity[]>([]);
-  const [filteredChatList, setFilteredChatList] = useState<chatEntity[]>([]);
+  const [chatList, setChatList] = useState<any[]>([]);
+  const [filteredChatList, setFilteredChatList] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ loading, setLoading ] = useState<boolean>(false)
 
@@ -30,23 +30,26 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
 
   useEffect(() => {
     const filtered = chatList.filter(chat => 
-      chat.users.some(u => u.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      chat.users.some((u: { username: string; }) => u?.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (chat.latestMessage && chat.latestMessage.content.toLowerCase().includes(searchTerm.toLowerCase()))||
       (chat.isGroupChat && chat.groupName.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredChatList(filtered);
   }, [searchTerm, chatList]);
 
+
   const getData = async() => {
     try {
       setLoading(true);
       const response = await axios.get(`${URL}/api/chat/chats`, config);
-      setChatList(response.data?.data);
-      setLoading(false)
+      const chatData = response.data?.data as getUserChatEntity[];  // Assert type here
+      setChatList(chatData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
   }
+  
 
   const handleSearch = () => {
     console.log('Searching for:', searchTerm);
@@ -121,7 +124,7 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
       </div>
     ) : (
       filteredChatList.map((chat) => {
-        const otherUser = chat.users.find(u => u._id !== user._id);
+        const otherUser = chat.users.find((u: { _id: any; }) => u._id !== user._id);
         return (
           <div 
             key={chat._id} 

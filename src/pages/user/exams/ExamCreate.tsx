@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios,{ AxiosError } from 'axios';
 import { URL } from '../../../common/api';
-import { config, configMultiPart } from '../../../common/configurations';
+import { config } from '../../../common/configurations';
 import { CourseEntity } from '../../../interface/courseEntity';
 import { getLocalStorage, setLocalStorage } from '../../../utils/localStorage';
 import toast from 'react-hot-toast';
+import { FormikErrors, FormikTouched } from 'formik';
+
+
 
 function ExamCreate() {
   const { examId } = useParams();
@@ -24,7 +27,6 @@ function ExamCreate() {
   useEffect(() => {
     getCoursesData();
     if(examId){
-      console.log("🚀 ~ useEffect ~ examId:", examId)
       fetchExamDetails(examId);
     }else{
       loadSavedExamData();
@@ -44,7 +46,6 @@ function ExamCreate() {
     try{
       const response = await axios.get(`${URL}/api/course/examsbyexamid/${examId}`,config)
       
-      console.log("🚀 ~ fetchExamDetails ~ response:", response)
       setInitialValues(response?.data?.data);
       localStorage.setItem('examQuestions',JSON.stringify(response?.data?.data?.questions))
     }catch(error){
@@ -54,7 +55,6 @@ function ExamCreate() {
   const loadSavedExamData = () => {
     const savedExamData = getLocalStorage('examData');
     if (savedExamData) {
-      console.log("🚀 ~ loadSavedExamData ~ savedExamData:", savedExamData)
       setInitialValues(savedExamData);
     }
   };
@@ -73,8 +73,7 @@ function ExamCreate() {
       .required('Number of questions is required'),
   });
 
-  const handleSubmit = async (values: any) => {
-  // Save form data to localStorage
+  const handleSubmit = async (values: typeof initialValues) => {
   setLocalStorage('examData', values);
 
   if (examId) {
@@ -85,8 +84,8 @@ function ExamCreate() {
       if (response?.data?.succes) {
         toast.error("Exam already exists for this course");
       }
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
         // If the exam does not exist, proceed to create a new one
         navigate("/instructor/exams/create/question");
       } else {
@@ -106,7 +105,10 @@ function ExamCreate() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ errors, touched }) => (
+        {({ errors, touched }: { 
+    errors: FormikErrors<typeof initialValues>, 
+    touched: FormikTouched<typeof initialValues> 
+}) => (
             <Form className="space-y-4">
               <div>
                 <label htmlFor="courseId" className="block font-medium mb-1">

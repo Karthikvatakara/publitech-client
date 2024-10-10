@@ -1,13 +1,12 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { config } from '../../../../common/configurations';
 import { URL } from '../../../../common/api';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { CategoryDistribution } from '../../../../interface/CategoryDistribution';
 
-
-// Function to generate random colors for each category
-const generateColors = (length) => {
+const generateColors = (length:number) => {
   const colors = [];
   for (let i = 0; i < length; i++) {
     colors.push(`#${Math.floor(Math.random() * 16777215).toString(16)}`);
@@ -16,8 +15,8 @@ const generateColors = (length) => {
 };
 
 const PieCharts = () => {
-  const [chartData, setChartData] = useState(null);
-  const [colors, setColors] = useState([]);
+  const [chartData, setChartData] = useState<CategoryDistribution[] | null>([]);
+  const [colors, setColors] = useState<string[]>([]);
   const [ loading, setLoading ] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,7 +27,7 @@ const PieCharts = () => {
     try {
       setLoading(true)
       const response = await axios.get(`${URL}/api/course/admin/categoryEnrollments`, config);
-      console.log("🚀 ~ getData ~ response:", response);
+      console.log("🚀 ~ getData ~ response: piecharttttttttttts", response);
       const data = response?.data?.data;
       setChartData(data);
       setLoading(false)
@@ -41,7 +40,7 @@ const PieCharts = () => {
 
   return (
     <div style={{ width: '100%', height: '400px' }}>
-      {chartData ? (
+      {chartData && !loading ? (
         <ResponsiveContainer>
           <PieChart>
             <Pie
@@ -55,7 +54,7 @@ const PieCharts = () => {
               dataKey="percentage"
               nameKey="category"
             >
-              {chartData.map((entry, index) => (
+              {chartData?.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>

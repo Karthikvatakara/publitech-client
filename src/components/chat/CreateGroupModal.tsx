@@ -3,7 +3,7 @@ import axios from 'axios';
 import { URL } from '../../common/api';
 import { config } from '../../common/configurations';
 import { UserEntity } from '../../interface/UserEntity';
-import { FaSearch, FaTimes, FaUserPlus, FaUsers } from 'react-icons/fa';
+import {  FaTimes, FaUserPlus, FaUsers } from 'react-icons/fa';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -52,11 +52,14 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onClose, on
   };
 
   const toggleUserSelection = (user: UserEntity) => {
-    setSelectedUsers(prev => 
-      prev.includes(user._id)
-        ? prev.filter(id => id !== user._id)
-        : [...prev, user._id]
-    );
+    if (user._id) {
+      const userId = user._id as string;
+      setSelectedUsers(prev => 
+        prev.includes(userId)
+          ? prev.filter(id => id !== userId)
+          : [...prev, userId]
+      );
+    }
   };
 
   const handleCreateGroup = () => {
@@ -128,22 +131,26 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onClose, on
         </div>
 
         <div className="max-h-40 overflow-y-auto mb-4 border border-gray-200 rounded-md">
-          {filteredUsers.map(user => (
-            <div
-              key={user._id}
-              className={`p-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between ${
-                selectedUsers.includes(user._id) ? 'bg-blue-50' : ''
-              }`}
-              onClick={() => toggleUserSelection(user)}
-            >
-              <span>{user.username}</span>
-              {selectedUsers.includes(user._id) ? (
-                <FaUserPlus className="text-blue-500" />
-              ) : (
-                <FaUserPlus className="text-gray-400" />
-              )}
-            </div>
-          ))}
+          {filteredUsers.map(user => {
+              const userId = typeof user._id === 'string' ? user._id : String(user._id);
+
+              return (
+                <div
+                  key={userId}
+                  className={`p-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between ${
+                    selectedUsers.includes(userId) ? 'bg-blue-50' : ''
+                  }`}
+                  onClick={() => toggleUserSelection(user)}
+                >
+                  <span>{user.username}</span>
+                  {selectedUsers.includes(userId) ? (
+                    <FaUserPlus className="text-blue-500" />
+                  ) : (
+                    <FaUserPlus className="text-gray-400" />
+                  )}
+                </div>
+              );
+          })}
         </div>
 
         <div className="flex justify-end">

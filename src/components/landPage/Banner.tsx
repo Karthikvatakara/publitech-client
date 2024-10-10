@@ -1,4 +1,4 @@
-import React,{useCallback} from 'react';
+import {useCallback} from 'react';
 import fourthGrid from "../../assets/grids/fourth.png";
 import LandPageStudent from "../../assets/landPagestudent.png";
 import Particles from 'react-tsparticles'
@@ -15,7 +15,6 @@ function Banner() {
   const particlesLoaded = useCallback(async (container: TODO | undefined) => {
     return new Promise<void>((resolve) => {
       console.log(container);
-      // Additional initialization logic can go here
       resolve(container);
     });
   }, []);

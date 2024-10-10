@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState, RootState } from '../../redux/store';
@@ -85,7 +85,6 @@ function Navbar() {
                                             onClick={toggleDropdown}
                                         >
                                             <span className="sr-only">Open user menu</span>
-                                            {console.log(user?.profile?.avatar)}
                                             <img className="h-8 w-8 rounded-full" src={typeof user?.profile?.avatar === "string" ? user?.profile?.avatar : emptyImage} alt="" />
                                         </button>
                                     </div>

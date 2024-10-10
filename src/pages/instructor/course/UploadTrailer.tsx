@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Formik, Form, Field, FormikHelpers, FormikProps } from 'formik';
-import * as Yup from 'yup';
 import { FaBook } from 'react-icons/fa';
 import { CustomVideoFileInput } from '../../../components/common/filesUpload/CustomVideoFileInput';
 import CustomSingleFileImage from '../../../components/common/filesUpload/CustomSingleFileImage';

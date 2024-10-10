@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Cloudinary } from "@cloudinary/url-gen";
-import { CloudinaryVideo } from "@cloudinary/url-gen/assets/CloudinaryVideo";
 import { Transformation } from "@cloudinary/url-gen";
 import { concatenate } from "@cloudinary/url-gen/actions/videoEdit";
 import { scale } from "@cloudinary/url-gen/actions/resize";

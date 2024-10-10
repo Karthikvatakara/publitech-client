@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import Navbar from '../../components/landPage/Navbar'
 import studying from "../../assets/applytoTeachForm/studying.png"
 import { applyToTeachValidationSchema } from '../../utils/validation'
@@ -7,7 +6,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import { AppState,RootState } from '../../redux/store'
 import { applyToTeach } from '../../redux/actions/user/userActions'
 import toast from "react-hot-toast"
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 interface applyFormInterface {
     email: string,
@@ -31,7 +30,7 @@ const initialValues :applyFormInterface = {
 
 
 function ApplytoTeachForm() {
-    const { user ,error } = useSelector((state:RootState)=> state.user);
+    const { user  } = useSelector((state:RootState)=> state.user);
     const dispatch = useDispatch<AppState>();
     const navigate = useNavigate();
 
@@ -52,7 +51,7 @@ function ApplytoTeachForm() {
             navigate("/apply-success");
         }
         if(result.meta.requestStatus === "rejected"){
-            toast.error(result.payload || "application submission failed")
+            toast.error( "application submission failed")
             navigate("/");
         }
     }

@@ -7,13 +7,13 @@ import ClipLoader from "react-spinners/ClipLoader";
 interface CustomSinglePdfInputProps {
   onChange: (file: File | string | null) => void;
   initialValue?: string;
+  
 }
 
 const CustomSinglePdfUpload: React.FC<CustomSinglePdfInputProps> = ({
   onChange,
-  initialValue,
+  initialValue
 }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialValue || null);
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -65,19 +65,18 @@ const CustomSinglePdfUpload: React.FC<CustomSinglePdfInputProps> = ({
 
   const handleFileUpload = async (file: File) => {
     setLoading(true);
-    setSelectedFile(file);
     try {
       console.log("Starting PDF upload...");
       console.log("File details:", file.name, file.size, file.type);
-      
+
       const pdfUrl = await PdfUpload(file);
-      
+
       console.log("PDF upload result:", pdfUrl);
-      
+
       if (!pdfUrl) {
         throw new Error("PDF upload failed: No URL returned");
       }
-      
+
       setPreviewUrl(pdfUrl);
       onChange(pdfUrl);
       console.log("PDF upload successful");
@@ -95,10 +94,10 @@ const CustomSinglePdfUpload: React.FC<CustomSinglePdfInputProps> = ({
   };
 
   const handleClearFile = () => {
-    setSelectedFile(null);
     setPreviewUrl(null);
     onChange(null);
   };
+
 
   return (
     <div
@@ -131,10 +130,10 @@ const CustomSinglePdfUpload: React.FC<CustomSinglePdfInputProps> = ({
           >
             Clear File
           </button>
-          <a 
-            href={previewUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="ml-4 text-blue-500 hover:underline"
           >
             Download PDF

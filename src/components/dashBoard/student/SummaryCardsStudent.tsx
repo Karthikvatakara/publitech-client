@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import InstrucorDashboardCard from '../instructor/cardSection/InstrucorDashboardCard'
 import axios from 'axios';
 import { URL } from '../../../common/api';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { URL } from '../../../common/api';
 import { config } from '../../../common/configurations';
 import StudentCourseCard from './StudentCourseCard';

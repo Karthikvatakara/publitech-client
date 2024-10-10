@@ -52,6 +52,7 @@ const CategoryEditModal: React.FC<CategoryEditFormProps> = ({ onClose, category,
     try {
       const updatedCategory = await axios.put(`${URL}/api/course/admin/category/${category._id}`, data, config);
       toast.success("Category updated successfully");
+      console.log("🚀 ~ handleSubmit ~ updatedCategory:", updatedCategory)
       onClose(); // Close the modal after submission
       getData();
 

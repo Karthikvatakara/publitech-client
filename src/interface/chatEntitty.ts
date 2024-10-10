@@ -7,6 +7,7 @@ export interface chatEntity {
     latestMessage: string | ObjectId,
     groupName: String,
     groupAdmin: string |ObjectId,
+    subscriptionType: 'none' | 'basic' | 'standard' | 'premium';  
     createdAt?: Date | string;
     updatedAt?: Date | string;
 }

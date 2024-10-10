@@ -1,7 +1,6 @@
 import React from 'react';
 import { FaBookBookmark, FaUser, FaTrophy, FaStar } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
-import { EnrollmentEntity } from '../../../interface/EnrollmentEntity';
 
 interface UserCourseCardProps {
   enrollment: any;

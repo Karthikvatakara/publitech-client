@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { debounce } from 'lodash';
 import { URL } from '../../common/api';
 import { config } from '../../common/configurations';
 import { UserEntity } from '../../interface/UserEntity';
 import Pagination from '../../components/common/Pagination';
 import ConfirmationModal from '../../components/common/modals/ConfirmationModal';
+import { Player } from '@lottiefiles/react-lottie-player';
+// import { useSocketContext } from '../../context/socketContext';
 
 function UsersList() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -16,6 +17,7 @@ function UsersList() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [ showModal, setShowModal ] = useState<boolean>(false);
   const [ selectedUser, setSelectedUser ] = useState<UserEntity | null>(null);
+  // const { socket } = useSocketContext();
 
   useEffect(() => {
     getUserData();
@@ -68,13 +70,30 @@ function UsersList() {
 }
 
   const changeUserStatus = async(user:UserEntity) => {
-  setLoading(true)
+  // setLoading(true)
   console.log("🚀 ~ changeUserStatus ~ user:", user)
   const response = await axios.post(`${URL}/api/user/admin/students/status/${user._id}`,config)
-  console.log("🚀 ~ changeUserStatus ~ response:", response)
-  setLoading(false)
+  console.log("🚀 ~ changeUserStatus ~ response:", response);
+  setUserData((prevData) => 
+    prevData 
+      ? prevData.map((userData) => 
+          userData?._id === user._id
+            ? { ...userData, isBlocked: response?.data?.data?.isBlocked }
+            : userData
+        )
+      : prevData 
+  );
+  if(response?.data?.data?.isBlocked) {
+    
+    // if(socket && response?.data?.data?.isBlocked){
+    //   socket.emit('block-user',{ userId: user?._id});
+    //   console.log(`Emitted block-user event for user ${user._id}`);
+    // }else{
+    //   console.log('socket is not available')
+    // }
+  }
+  // setLoading(false)
   setShowModal(false)
-  getUserData();
   }
 
 
@@ -111,9 +130,15 @@ function UsersList() {
 
       <div className='w-full overflow-x-auto bg-gray-50 rounded-xl p-4 shadow'>
         {loading ? (
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div>
+          // <div className="flex justify-center items-center h-32">
+          //   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          // </div>
+          <Player
+          autoplay
+          loop
+          src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+          style={{ height: '120px', width: '120px' }}
+       />
         ) : userData && userData.length > 0 ? (
           <table className='min-w-full divide-y divide-gray-200'>
             <thead className='bg-gray-50'>
@@ -126,7 +151,7 @@ function UsersList() {
             </thead>
             <tbody className='bg-white divide-y divide-gray-200'>
               {userData.map((user) => (
-                <tr key={user?._id} className='hover:bg-gray-50'>
+                <tr key={user?._id ? String(user._id) : user.email} className='hover:bg-gray-50'>
                   <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user?.username}</td>
                   <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{user?.email}</td>
                   <td className='px-6 py-4 whitespace-nowrap'>

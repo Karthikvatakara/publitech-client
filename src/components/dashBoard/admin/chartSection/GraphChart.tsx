@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { URL } from '../../../../common/api';
 import { config } from '../../../../common/configurations';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { FormattedRevenueData } from '../../../../interface/FormattedRevenueData';
 
 function GraphChart() {
-    const [graphData, setGraphData] = useState([]);
+    const [graphData, setGraphData] = useState<FormattedRevenueData[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -17,7 +18,7 @@ function GraphChart() {
         try {
             setLoading(true);
             const response = await axios.get(`${URL}/api/payment/admin/totalrevenue`, config);
-            const formattedData = response.data.data.map(item => ({
+            const formattedData = response?.data?.data.map((item: { year: any; month: { toString: () => string; }; }) => ({
                 ...item,
                 date: `${item.year}-${item.month.toString().padStart(2, '0')}`,
             }));

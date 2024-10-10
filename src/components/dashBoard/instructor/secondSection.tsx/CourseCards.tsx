@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { URL } from '../../../../common/api';
 import { config } from '../../../../common/configurations';
 import { CourseEntity } from '../../../../interface/courseEntity';
@@ -18,14 +18,13 @@ const CourseCards = () => {
         try{
             setLoading(true)
             const response = await axios.get(`${URL}/api/course/instructor/instructorCourses`,config);
-            console.log("🚀 ~ getData ~ response:1212221", response);
             setCourseData(response?.data?.data);
             setLoading(false)
         }catch(error){
             console.error("error in the getdata",error);
             setLoading(false);
         }   
-    }
+    };
    
     if(loading) {
         return (

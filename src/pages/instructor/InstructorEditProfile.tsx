@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import  { FC, useState } from 'react';
 import { AiOutlineMail, AiOutlinePhone, AiOutlineUser, AiOutlineClose } from 'react-icons/ai';
 import { RiCalendarEventFill, RiLinkedinLine } from 'react-icons/ri';
 import { VscGithubAlt } from 'react-icons/vsc';
@@ -32,7 +32,7 @@ interface FormValues {
   avatar: string | null;
 }
 
-const InstructorEditProfile: FC<InstructorEditProfileProps> = ({ user, onSave, onClose }) => {
+const InstructorEditProfile: FC<InstructorEditProfileProps> = ({ user, onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppState>()
   const [profileImage, setProfileImage] = useState<string | null>(user?.profile?.avatar || null);

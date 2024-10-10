@@ -1,4 +1,3 @@
-import React from 'react'
 import elearning from "../../assets/e-learning.png"
 
 function HeroSection() {

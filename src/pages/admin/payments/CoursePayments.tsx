@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { URL } from '../../../common/api';
 import { config } from '../../../common/configurations';
 import Pagination from '../../../components/common/Pagination';
+import { PopulatedPaymentEntity } from '../../../interface/populatedPaymentEntity';
 
 function CoursePayments() {
     const [ loading, setLoading ] = useState<boolean>(false);
-    const [ paymentData, setPaymentData ] = useState<any[]>([]);
+    const [ paymentData, setPaymentData ] = useState<PopulatedPaymentEntity[]>([]);
     const [ selectedStatus, setSelectedStatus ] = useState<string>('all')
     const [ searchTerm, setSearchTerm ] = useState<string>('');
     const [ currentPage, setCurrentPage ] = useState<number>(1)
@@ -96,7 +97,7 @@ function CoursePayments() {
             </thead>
             <tbody className='bg-white divide-y divide-gray-200'>
               {paymentData.map((payment) => (
-                <tr key={payment?._id} className='hover:bg-gray-50'>
+                <tr key={payment?._id } className='hover:bg-gray-50'>
                   <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{payment?.userId?.username}</td>
                   <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{payment?.instructorRef?.username}</td>
                   <td className='px-6 py-4 whitespace-nowrap'>

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios  from "axios";
-import { config,handleError,configMultiPart } from "../../../common/configurations";
+import { config,handleError } from "../../../common/configurations";
 import { URL } from "../../../common/api";
 
 

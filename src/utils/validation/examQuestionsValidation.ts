@@ -12,7 +12,7 @@ export const examQuestionValidationSchema = Yup.object({
       .required('Correct answer is required')
       .test('match-option', 'Answer must match one of the options', function (value) {
         const options = this.parent.options;
-        return options.some(opt => opt.option === value);
+        return options.some((opt: { option: string; }) => opt.option === value);
       }),
   });
   

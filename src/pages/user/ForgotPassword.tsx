@@ -4,11 +4,10 @@ import { Formik,Form } from 'formik';
 import { emailValidationSchema } from '../../utils/validation';
 import InputField from '../../components/common/InputField';
 import { Link } from 'react-router-dom';
-import { useDispatch,useSelector } from 'react-redux';
-import { RootState,AppState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
+import { AppState } from '../../redux/store';
 import { forgotPassword } from '../../redux/actions/user/userActions';
 import toast  from 'react-hot-toast';
-import { Navigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 
 

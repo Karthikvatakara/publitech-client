@@ -1,14 +1,15 @@
-import React,{ useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { config } from '../../common/configurations';
 import { URL } from '../../common/api';
+import { ExamCardProps } from '../../interface/ExamCardProps';
 
-const ExamCard = ({ title, score, totalScore, isPassed, resultData, createdAt }) => {
+const ExamCard:React.FC<ExamCardProps> = ({ title, score, totalScore, isPassed, resultData, createdAt }) => {
 
     const [certificateUrl, setCertificateUrl] = useState<string | null>(null);
     const navigate = useNavigate();
-
+    
     const handleExamSubmit = (id:string) => {
         navigate(`/student/exams/${id}`)
     }
@@ -64,7 +65,7 @@ const ExamCard = ({ title, score, totalScore, isPassed, resultData, createdAt })
           Download Certificate
         </button>
       ) : (
-        <button className="w-full bg-yellow-500 font-semibold text-white py-2 rounded-full hover:bg-yellow-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50" onClick={()=> handleExamSubmit(resultData?.assessmentRef?._id)}>
+        <button className="w-full bg-yellow-500 font-semibold text-white py-2 rounded-full hover:bg-yellow-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50" onClick={()=> handleExamSubmit(resultData?.assessmentRef?._id.toString())}>
           Retake Exam
         </button>
       )}

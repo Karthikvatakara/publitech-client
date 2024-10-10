@@ -11,9 +11,9 @@ interface StudentNavbarProps {
   isCollapsed: boolean;
 }
 
-const StudentNavbar: React.FC<StudentNavbarProps> = ({ toggleSidebar, isCollapsed }) => {
+const StudentNavbar: React.FC<StudentNavbarProps> = ({ toggleSidebar }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const user: any = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

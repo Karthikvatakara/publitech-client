@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-config
+  labels:
+    app: publitech-client
+data:
+  VITE_REACT_APP_BASE_URL: "http://bizprogym.shop"
+  VITE_REACT_APP_GOOGLE_ID: "816593476387-51filv8g64130omc5q012ikhgaijvgs1.apps.googleusercontent.com"
+  VITE_REACT_APP_PRESET_KEY: "images_preset"
+  VITE_REACT_APP_VIDEO_PRESET_KEY: "videos_preset"
+  VITE_REACT_APP_CLD_USER_NAME: "dozwnxgav"
+  VITE_STRIPE_PUBLIC_KEY: pk_test_51PdA6QFCAsMjHX42Oedcrd7Zdv6a1SNzhP3J5eEMR932h3yT8tHIcBVPgdVDbLge4whStidfPfEwkSdWACMmwOkY00BCsCJkPy
+  VITE_REACT_APP_CHAT_URL: "http://localhost:3006"
+  VITE_REACT_APP_FIREBASE_KEY: "BBNYazeve5RCMfOXCGHQoSl60qZ-QFbwfLt49SdbamGWEeiBBzo5fmmUx2EFN1pQNwFw6CAmAgISm_lUbn1B5ZU"

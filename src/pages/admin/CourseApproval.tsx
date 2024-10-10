@@ -1,39 +1,41 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { URL } from '../../common/api';
-import { CourseEntity } from '../../interface/courseEntity';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaFilter, FaSort } from 'react-icons/fa';
 import Pagination from '../../components/common/Pagination';
 import { config } from '../../common/configurations';
 import { Player } from '@lottiefiles/react-lottie-player';
-
+import { CoursePopulated } from '../../interface/coursePopulated';
 
 function CourseApproval() {
-    const [courseDetails, setCourseDetails] = useState<CourseEntity[]>([]);
+    const [courseDetails, setCourseDetails] = useState<CoursePopulated[]>([]);
     const [totalCourses, setTotalCourses] = useState(0);
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('');
     const [sort, setSort] = useState('');
     const navigate = useNavigate();
     const [ loading, setLoading ] = useState<boolean>(false);
-
+    const limit = 5;
+    
     useEffect(() => {
         getData();
     }, [page, limit, search, filter, sort]);
 
     const getData = async () => {
         try {
+            setLoading(true);
             const { data } = await axios.get(`${URL}/api/course/allcourses`, {
                 params: { page, limit, search, filter, sort },
                 ...config
             });
             setCourseDetails(data.data);
             setTotalCourses(data.total);
+            setLoading(false)
         } catch (error) {
             console.error("Error fetching course data:", error);
+            setLoading(false)
         }
     };
 
@@ -107,12 +109,14 @@ function CourseApproval() {
             </div>
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
-            {loading &&<Player
-                        autoplay
-                        loop
-                        src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
-                        style={{ height: '200px', width: '200px' }}
-                     />} 
+            {loading ?(
+                <Player
+                autoplay
+                loop
+                src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+                style={{ height: '120px', width: '120px' }}
+             />
+            ):(
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -162,29 +166,8 @@ function CourseApproval() {
                         ))}
                     </tbody>
                 </table>
+                )} 
             </div>
-
-            {/* <div className="mt-6 flex justify-between items-center">
-                <div className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to <span className="font-medium">{Math.min(page * limit, totalCourses)}</span> of <span className="font-medium">{totalCourses}</span> results
-                </div>
-                <div className="flex space-x-2">
-                    <button 
-                        onClick={() => handlePageChange(page - 1)} 
-                        disabled={page === 1}
-                        className="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Previous
-                    </button>
-                    <button 
-                        onClick={() => handlePageChange(page + 1)} 
-                        disabled={page * limit >= totalCourses}
-                        className="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Next
-                    </button>
-                </div>
-            </div> */}
 
                 <div className="mt-6">
                 <Pagination

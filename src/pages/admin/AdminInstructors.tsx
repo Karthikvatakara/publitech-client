@@ -1,18 +1,18 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { URL } from '../../common/api'
-import toast from 'react-hot-toast';
 import { config } from '../../common/configurations';
-import LoadingSpinner from '../../components/common/loading/LoadingSpinner';
 import ConfirmationModal from '../../components/common/modals/ConfirmationModal';
 import { TbListDetails } from "react-icons/tb";
 import InstructorDetailsModal from '../../components/common/instructorDetailsModal';
 import Pagination from '../../components/common/Pagination';
+import { Player } from '@lottiefiles/react-lottie-player';
+import { UserEntity } from '../../interface/UserEntity';
 
 function AdminInstructors() {
-  const [instructorData, setInstructorData] = useState<any[]>([])
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [instructorData, setInstructorData] = useState<UserEntity[]>([])
+  const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(null)
   const [modalAction, setModalAction] = useState<"block" | "unblock">("block")
@@ -28,6 +28,7 @@ function AdminInstructors() {
 
   const getInstructorData = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${URL}/api/user/admin/instructor`, {
         ...config,
         params: {
@@ -41,7 +42,7 @@ function AdminInstructors() {
       setTotalPages(response.data.totalPages)
       setLoading(false)
     } catch (error) {
-      setError("Failed to fetch instructor data")
+      // setError("Failed to fetch instructor data")
       console.log(error);
       setLoading(false);
     }
@@ -51,13 +52,23 @@ function AdminInstructors() {
     try {
       if (selectedInstructor) {
         const id = selectedInstructor;
-        await axios.post(`${URL}/api/user/admin/instructor/status`, { id, action }, config)
+        setLoading(true);
+        await axios.post(`${URL}/api/user/admin/instructor/status`, { id, action }, config);
+
+        setInstructorData((prevInstructor) => 
+        prevInstructor.map((instructor) => 
+          instructor._id === selectedInstructor ?(
+            { ...instructor,isBlocked: action === "block"}
+          ):(
+            instructor
+          )
+        ));
+
         setLoading(false)
         setShowModal(false);
-        getInstructorData();
       }
     } catch (error) {
-      setError("Failed to update instructor status")
+      // setError("Failed to update instructor status")
       setLoading(false)
     }
   }
@@ -68,7 +79,7 @@ function AdminInstructors() {
     setShowModal(true);
   }
 
-  const openDetailsModal = (instructor: any) => {
+  const openDetailsModal = (instructor: string) => {
     setShowDetailsModal(true);
     setSelectedInstructor(instructor);
   }
@@ -122,7 +133,14 @@ function AdminInstructors() {
         </div>
       </div>
 
-      {loading ? (<LoadingSpinner />) : (
+      {loading ? 
+       <Player
+       autoplay
+       loop
+       src="https://lottie.host/9606a518-e28e-47af-b63b-26f1de6ecf13/lTWeXJsxSL.json"
+       style={{ height: '120px', width: '120px' }}
+    />
+      : (
         <div className='lg:overflow-hidden bg-gray-100 p-3 rounded-xl'>
           <table className='w-full min-w-max table-auto border-collapse'>
             <thead className='font-normal bg-gray-200 rounded-sm'>
@@ -137,19 +155,19 @@ function AdminInstructors() {
             </thead>
             <tbody>
               {instructorData.map((instructor) => (
-                <tr key={instructor._id}>
-                  <td className='py-2 px-4 border-b'>{instructor.email}</td>
-                  <td className='py-2 px-4 border-b'>{instructor.profession}</td>
+                <tr key={instructor._id as string}>
+                  <td className='py-2 px-4 border-b'>{instructor?.email}</td>
+                  <td className='py-2 px-4 border-b'>{instructor?.profession}</td>
                   <td className='py-2 px-4 border-b'>{instructor.profileDescription}</td>
                   <td className='py-2 px-4 border-b'>{instructor.isBlocked ? "Blocked" : "Active"}</td>
-                  <td className='py-2 px-4 border-b cursor-pointer' onClick={() => openDetailsModal(instructor)}>
+                  <td className='py-2 px-4 border-b cursor-pointer' onClick={() => openDetailsModal(instructor?._id as string)}>
                     <TbListDetails className='text-blue-500' />
                   </td>
                   <td className='py-2 px-4 border-b'>
                     {instructor.isBlocked ? (
-                      <button className='p-2 rounded-xl bg-green-600 font-bold' onClick={() => openModal(instructor._id, "unblock")}>Unblock</button>
+                      <button className='p-2 rounded-xl bg-green-600 font-bold' onClick={() => openModal(instructor._id as string, "unblock")}>Unblock</button>
                     ) : (
-                      <button className='p-2 rounded-xl bg-red-500 font-bold' onClick={() => openModal(instructor._id, "block")}>Block</button>
+                      <button className='p-2 rounded-xl bg-red-500 font-bold' onClick={() => openModal(instructor._id as string, "block")}>Block</button>
                     )}
                   </td>
                 </tr>

@@ -1,4 +1,4 @@
-import { createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { config,handleError } from "../../../common/configurations";
 import { URL } from "../../../common/api";
@@ -30,10 +30,8 @@ export const getAllCourse = createAsyncThunk("/instructor/getAllCourse",async(_,
 
 
 export const getSingleCourse = createAsyncThunk("/instructor/getSingleCourse",async(courseId:string,{ rejectWithValue }) => {
-    try{
-        console.log("🚀 ~ getSingleCourse ~ courseId:in thunk", courseId)
-        
-        const response = await axios.get(`${URL}/api/course/course/${courseId}`)
+    try{        
+        const response = await axios.get(`${URL}/api/course/course/${courseId}`,config)
         
         console.log("🚀 ~ getSingleCourse ~ response:", response.data)
         return response.data

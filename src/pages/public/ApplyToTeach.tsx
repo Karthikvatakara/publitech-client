@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../components/landPage/Navbar';
 import Banner from '../../components/applyToTeach/Banner';
 import HeroSection from '../../components/applyToTeach/HeroSection';

@@ -1,4 +1,4 @@
-import React,{ FC,useEffect } from 'react'
+import React,{ useEffect } from 'react'
 import { FaBookBookmark } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import { FaTrophy } from "react-icons/fa6";

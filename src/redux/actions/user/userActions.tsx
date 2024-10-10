@@ -1,23 +1,26 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";   
 import axios from "axios";
-import { config, handleError,configMultiPart } from "../../../common/configurations";
+import { config, handleError } from "../../../common/configurations";
 import { URL } from "../../../common/api";
 import { IUserLogin } from "../../../types/userLogin";
 
 //signup
 export const signupUser = createAsyncThunk(
     "user/signupUser",
-    async(userData:any,{ rejectWithValue }) =>{
-    try{
-        const response = await axios.post(`${URL}/api/auth/signup`,userData, 
-            config
-        );
-        console.log(response.data ,"data reached heree");
-        return response.data;
-    }catch(error:any) {
-        return handleError(error,rejectWithValue);
+    async (userData: any, { rejectWithValue }) => {
+      try {
+        const response = await axios.post(`${URL}/api/auth/signup`, userData, config);
+        if (response?.data?.success) {
+            console.log(response?.data?.data,"it is in the signupuser actions")
+          return response.data; // This should indicate that OTP was sent, not that user was created
+        } else {
+          return rejectWithValue(response.data.message);
+        }
+      } catch (error: any) {
+        return handleError(error, rejectWithValue);
+      }
     }
-})
+  );
 
 //getUserData
 export const getUserData = createAsyncThunk(
@@ -28,6 +31,10 @@ export const getUserData = createAsyncThunk(
             console.log(result,"data reached in the getuserdata");
             return result.data;
         }catch(error:any) {
+            if (error.response && error.response.status === 401 && error.response.data.message === "Authentication required. no user provided") {
+                // Return null to indicate no user is logged in
+                return null;
+            }
             console.error("error in the getuserData",error);
             return handleError(error,rejectWithValue)
         }
@@ -112,8 +119,8 @@ export const editUserProfile = createAsyncThunk("user/editProfile",async(formDat
         
         console.log("🚀 ~ editUserProfile ~ response:", response)
         return response.data;
-    }catch(error:any){
-        return rejectWithValue(error.response.data.message)
+    }catch(error){
+        return rejectWithValue((error as Error)?.message)
     } 
     
 })

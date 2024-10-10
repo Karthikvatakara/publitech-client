@@ -1,8 +1,9 @@
 import React from 'react';
 import { Field, ErrorMessage, useFormikContext } from 'formik';
-import CustomVideoFileInput from '../../../components/common/filesUpload/CustomVideoFileInput';
+// import CustomVideoFileInput from '../../../components/common/filesUpload/CustomVideoFileInput';
 import CustomSinglePdfUpload from '../../../components/common/filesUpload/CustomSinglePdfUpload';
 import CustomSingleFileImage from '../../../components/common/filesUpload/CustomSingleFileImage';
+import { CustomVideoFileInput } from '../../../components/common/filesUpload/CustomVideoFileInput';
 
 interface LessonFormProps {
   index: number;
@@ -27,7 +28,7 @@ const LessonForm: React.FC<LessonFormProps> = ({ index, onDelete, isCurrentLesso
           </div>
           <CustomSinglePdfUpload
             onChange={(file) => setFieldValue(`lessons.${index}.attachments.url`, file)}
-            isRequired={isCurrentLesson}
+            // isRequired={isCurrentLesson}
           />
           <ErrorMessage name={`lessons.${index}.attachments.url`} component="div" className="text-red-500" />
         </div>
@@ -35,7 +36,7 @@ const LessonForm: React.FC<LessonFormProps> = ({ index, onDelete, isCurrentLesso
           <div className="mb-4">
             <CustomSingleFileImage
               onChange={(file) => setFieldValue(`lessons.${index}.thumbnail`, file)}
-              isRequired={isCurrentLesson}
+              // isRequired={isCurrentLesson}
             />
             <ErrorMessage name={`lessons.${index}.thumbnail`} component="div" className="text-red-500" />
           </div>

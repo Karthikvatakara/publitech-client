@@ -1,8 +1,11 @@
 
-interface LessonProgress {
-    lessonId:  string,
-    totalTimeWatched: number
-}
+export interface LessonProgress {
+    lessonId: string;
+    lastWatchedPosition?: number;
+    totalTimeWatched?: number;
+    isCompleted?: boolean; 
+  }
+  
 
 export interface EnrollmentEntity {
     _id?: string;

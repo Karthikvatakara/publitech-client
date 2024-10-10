@@ -1,14 +1,37 @@
-
-import React, { useState, useEffect } from 'react';
-import { Formik, Form, Field, FieldArray } from 'formik';
+import  { useState, useEffect } from 'react';
+import { Formik, Form, Field, FieldArray, FormikErrors, FormikTouched } from 'formik';
 import { examQuestionValidationSchema } from '../../../utils/validation/examQuestionsValidation';
 
-function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSave }) {
-  const [savedQuestions, setSavedQuestions] = useState([]);
+interface Option {
+  option: string;
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+  answer: string;
+}
+
+interface QuestionFormProps {
+  questionNumber: number;
+  totalQuestions: number;
+  onNext: () => void;
+  onPrevious: () => void;
+  onSave: () => void;
+}
+
+function QuestionForm({
+  questionNumber,
+  totalQuestions,
+  onNext,
+  onPrevious,
+  onSave,
+}: QuestionFormProps) {
+  const [savedQuestions, setSavedQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
-    const savedQuestionsString:any = localStorage.getItem('examQuestions');
-    if (savedQuestionsString && typeof savedQuestionsString === 'string') {
+    const savedQuestionsString = localStorage.getItem('examQuestions');
+    if (savedQuestionsString) {
       try {
         const parsedQuestions = JSON.parse(savedQuestionsString);
         if (Array.isArray(parsedQuestions)) {
@@ -18,19 +41,12 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
         console.error('Error parsing saved questions:', error);
       }
     }
-  }, [questionNumber,onNext,onPrevious]);
+  }, [questionNumber]);
 
-  
-  const getInitialValues = () => {
-    // console.log(questionNumber,"{{{{{{{{{{{{}}}}}}}}}}}}}}}::::::>>>>>><<<<<<<<<<<<<<")
-
-    console.log("🚀 ~ getInitialValues ~ savedQuestions:", savedQuestions)
+  const getInitialValues = (): Question => {
     if (savedQuestions.length > 0 && savedQuestions[questionNumber - 1]) {
-      
-      // console.log("1111111111111111111111111111111111111111")
       return savedQuestions[questionNumber - 1];
     } else {
-      // console.log("2222222222222222222222222222222222222222222222")
       return {
         question: '',
         options: [{ option: '' }, { option: '' }, { option: '' }, { option: '' }],
@@ -39,9 +55,10 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
     }
   };
 
-
-
-  const handleSubmit = (values, { setSubmitting }) => {
+  const handleSubmit = (
+    values: Question,
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+  ) => {
     try {
       const updatedQuestions = [...savedQuestions];
       updatedQuestions[questionNumber - 1] = values;
@@ -54,28 +71,31 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
     if (questionNumber < totalQuestions) {
       onNext();
     } else {
-      console.log("reached on onsave portion")
       onSave();
     }
     setSubmitting(false);
   };
 
-  {console.log(getInitialValues(),'this is get initial values')}
   return (
     <Formik
       initialValues={getInitialValues()}
       validationSchema={examQuestionValidationSchema}
       onSubmit={handleSubmit}
       enableReinitialize={true}
-      
     >
-      {({ errors, touched }) => (
+      {({
+        errors,
+        touched,
+      }: {
+        errors: FormikErrors<Question>;
+        touched: FormikTouched<Question>;
+      }) => (
         <Form className="space-y-4">
-                   <div>
-             <label htmlFor="question" className="block font-medium mb-1">
-               Question
-             </label>
-          <Field
+          <div>
+            <label htmlFor="question" className="block font-medium mb-1">
+              Question
+            </label>
+            <Field
               as="textarea"
               id="question"
               name="question"
@@ -93,10 +113,7 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
               <div>
                 {[0, 1, 2, 3].map((index) => (
                   <div key={index} className="mb-2">
-                    <label
-                      htmlFor={`options.${index}.option`}
-                      className="block font-medium mb-1"
-                    >
+                    <label htmlFor={`options.${index}.option`} className="block font-medium mb-1">
                       Option {index + 1}
                     </label>
                     <Field
@@ -104,15 +121,21 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
                       id={`options.${index}.option`}
                       name={`options.${index}.option`}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        touched.options?.[index]?.option && errors.options?.[index]?.option
+                        touched.options?.[index]?.option && 
+                        errors.options?.[index]
                           ? 'border-red-500'
                           : 'border-gray-300'
                       }`}
                     />
-                    {touched.options?.[index]?.option && errors.options?.[index]?.option && (
+                  {touched.options?.[index]?.option &&
+                    errors.options?.[index] && (
                       <div className="text-red-500 text-sm mt-1">
-                        {errors.options[index].option}
-                      </div>
+                      {typeof errors.options?.[index] === 'string'
+                        ? errors.options?.[index]
+                        : typeof errors.options?.[index] === 'object'
+                        ? (errors.options?.[index] as FormikErrors<Option>)?.option
+                        : 'Invalid option'}
+                    </div>
                     )}
                   </div>
                 ))}
@@ -161,5 +184,3 @@ function QuestionForm({ questionNumber, totalQuestions, onNext, onPrevious, onSa
 }
 
 export default QuestionForm;
-
-

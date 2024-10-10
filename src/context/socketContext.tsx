@@ -3,6 +3,7 @@ import io, { Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
+
 const SOCKET_URL = import.meta.env.VITE_REACT_APP_CHAT_URL;
 
 interface SocketContextType {
@@ -32,7 +33,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const [messages, setMessages] = useState<any[]>([]);
 
     useEffect(() => {
-        if ((user?.role === "instructor" || user?.role === "student") && SOCKET_URL) {
+        if ((user?.role === "instructor" || user?.role === "student" || user?.role === "admin") && SOCKET_URL) {
             const newSocket = io(SOCKET_URL, {
                 query: {
                     userId: user._id,
@@ -61,6 +62,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 console.error("Connection error:", error);
             });
 
+            newSocket.on("block-user",() => {
+                console.log("user blocked")
+            });
+
             newSocket.on("error", (error) => {
                 console.error("Socket error:", error);
             });
@@ -69,6 +74,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 newSocket.off("getOnlineUsers");
                 newSocket.off("message received");
                 newSocket.off("connect");
+                newSocket.off("block-user");
                 // newSocket.off("disconnect");
                 newSocket.off("connect_error");
                 newSocket.off("error");

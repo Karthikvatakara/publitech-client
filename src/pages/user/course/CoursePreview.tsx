@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import  { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState, RootState } from '../../../redux/store';
 import { getSingleCourse } from '../../../redux/actions/course/courseActons';
 import ReactPlayer from 'react-player';
-import { FaPlay, FaPaperclip, FaChevronDown, FaChevronUp, FaCheckCircle } from 'react-icons/fa';
+import {  FaPaperclip } from 'react-icons/fa';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import axios from 'axios';
 import _ from 'lodash';
@@ -12,10 +12,11 @@ import LessonItem from './courseComponents/LessonItem';
 import { URL } from '../../../common/api';
 import { config } from '../../../common/configurations';
 import ExpandableDescription from './courseComponents/ExpandableDescription';
-import { RiPlayReverseFill } from 'react-icons/ri';
 import { EnrollmentEntity } from '../../../interface/EnrollmentEntity';
 import { assessmentEntity } from '../../../interface/assessmentEntity';
 import ExamPassedModal from '../../../components/exam/ExamPassedModal';
+import { CourseEntity } from '../../../interface/courseEntity';
+import { LessonEntity } from '../../../interface/courseEntity';
 
 interface LessonProgress {
   lastWatchedPosition?: number;
@@ -24,12 +25,12 @@ interface LessonProgress {
 }
 
 function CoursePreview() {
-  const [courseData, setCourseData] = useState<any | null>(null);
+  const [courseData, setCourseData] = useState<CourseEntity | null>(null);
   const [currentLesson, setCurrentLesson] = useState<number>(0);
   const [lessonProgress, setLessonProgress] = useState<LessonProgress>({});
   const { courseId } = useParams<{ courseId: string }>();
   const dispatch = useDispatch<AppState>();
-  const { loading, course } = useSelector<RootState, { loading: boolean; course: any }>((state) => state.courses);
+  const { loading } = useSelector<RootState, { loading: boolean; course: CourseEntity[] }>((state) => state.courses);
   const userId = useSelector((state: RootState) => state.user.user._id);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [ enrollment, setEnrollment ] = useState<EnrollmentEntity | null>(null)
@@ -62,7 +63,7 @@ function CoursePreview() {
 
   useEffect(() => {
     if (courseId && courseData?.lessons[currentLesson]?._id) {
-      fetchLessonProgress(courseData.lessons[currentLesson]._id);
+      fetchLessonProgress(courseData.lessons[currentLesson]._id!);
     }
   }, [courseId, currentLesson, courseData]);
 
@@ -75,7 +76,7 @@ function CoursePreview() {
   const checkAllLessonsCompleted = useCallback(() => {
     if (enrollment?.progress?.lessonProgress && courseData?.lessons) {
       const allCompleted = courseData.lessons.every(lesson => 
-        enrollment?.progress?.lessonProgress.find(lp => lp.lessonId === lesson._id)?.isCompleted
+        enrollment?.progress?.lessonProgress!.find(lp => lp.lessonId === lesson._id)?.isCompleted
       );
       setAllLessonsCompleted(allCompleted);
     }
@@ -96,14 +97,11 @@ function CoursePreview() {
   const getEnrolledCourse = async() => {
     const response = await axios.get(`${URL}/api/course/enrollment/${courseId}/${userId}`,config);
     setEnrollment(response?.data?.data)
-    console.log("🚀 ~ getEnrolledCourse ~ response:", response?.data?.data)
   }
 
   const getExamsOfCourse = async() => {
     const response = await axios.get(`${URL}/api/course/exams/${courseId}`,config);
-    console.log("🚀 ~ getExamsOfCourse ~ response:", response)
     if( response?.data?.succes ) {
-      console.log(response?.data?.success,"::::::::::::::::::::::::")
       setExamPresent(true);
       setExamDetails(response?.data?.data)
     }
@@ -113,7 +111,6 @@ function CoursePreview() {
     try {
       const response = await axios.get<{data: LessonProgress }>(`${URL}/api/course/lesson-progress/${userId}/${courseId}/${lessonId}`, config);
       setLessonProgress(response?.data?.data || {});
-      // console.log(response?.data?.data,"????????????????????????????????????")
     } catch (error) {
       console.error('Error fetching lesson progress:', error);
       setLessonProgress({});
@@ -124,7 +121,7 @@ function CoursePreview() {
     setCurrentLesson(index);
     setHasInitialized(false);
     if (courseData?.lessons[index]?._id) {
-      fetchLessonProgress(courseData.lessons[index]._id);
+      fetchLessonProgress(courseData.lessons[index]._id!);
     }
   };
 
@@ -134,10 +131,10 @@ function CoursePreview() {
 
   const handleProgress = useCallback(
     _.debounce(async (progress) => {
-      const lessonId = courseData.lessons[currentLesson]._id;
+      const lessonId = courseData?.lessons[currentLesson]._id;
       const timeWatched = progress.playedSeconds;
       const totalDuration = progress.loadedSeconds;
-      const isCompleted = (timeWatched / totalDuration) >= 0.95; // Consider it complete when 95% watched
+      const isCompleted = (timeWatched / totalDuration) >= 0.95; 
   
       try {
         await axios.post(`${URL}/api/course/lesson-progress`, {
@@ -169,7 +166,6 @@ function CoursePreview() {
   const getExamResult = async() => {
     if(examDetails && examDetails?._id) {
       const response = await axios.get(`${URL}/api/course/isResultExist/${examDetails?._id}`,config);
-      console.log("🚀 ~ getExamResult ~ response:", response)
       if (response?.data?.success){
         if(response?.data?.data?.isPassed){
           setExamPassed(true)
@@ -184,7 +180,6 @@ function CoursePreview() {
 
 
   const handleTakeExam = () => {
-    console.log(examPassed,"1222233333333333333333333333");
     if(examPassed){
       setShowPassedModal(true)
     }else{
@@ -239,7 +234,7 @@ function CoursePreview() {
               {courseData?.lessons[currentLesson]?.title}
             </h2>
             <ExpandableDescription 
-              description={courseData?.lessons[currentLesson]?.description} 
+              description={courseData?.lessons[currentLesson]?.description!} 
               maxWords={50}
             />
             {courseData?.lessons[currentLesson]?.attachments && (
@@ -247,10 +242,12 @@ function CoursePreview() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center">
                     <FaPaperclip className="text-blue-500 mr-2" />
-                    <span className="font-medium">{courseData.lessons[currentLesson].attachments.title || 'Lesson Resources'}</span>
-                  </div>
+                    <span className="font-medium">
+                   {courseData?.lessons[currentLesson]?.attachments?.title || 'Lesson Resources'}
+                  </span>                 
+                   </div>
                   <button
-                    onClick={() => handleOpenPDF(courseData?.lessons[currentLesson]?.attachments?.url)}
+                    onClick={() => handleOpenPDF(courseData?.lessons[currentLesson]?.attachments?.url!)}
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center transition duration-300"
                   >
                     <FaPaperclip className="mr-2" />
@@ -264,7 +261,7 @@ function CoursePreview() {
         <div className='lg:col-span-4 bg-white p-4 rounded-lg shadow-md'>
           <h2 className='font-bold text-darkBlue text-xl mb-4'>Course Content</h2>
           <div className="space-y-2">
-            {courseData?.lessons?.map((lesson: any, index: number) => (
+            {courseData?.lessons?.map((lesson: LessonEntity, index: number) => (
               <LessonItem
                 key={index}
                 lesson={lesson}
@@ -272,11 +269,10 @@ function CoursePreview() {
                 currentLesson={currentLesson}
                 handleLessonClick={handleLessonClick}
                 // progress={courseData.progress?.lessonProgress?.find(lp => lp.lessonId === lesson._id)}
-                progress={enrollment?.progress?.lessonProgress?.find(lp => lp.lessonId === lesson._id)}
+                progress={enrollment?.progress?.lessonProgress?.find(lp => lp.lessonId === lesson._id!)}
               />
             ))}
-            {/* {console.log(examPresent,"EXAMPRESENT CONSOLLING")} */}
-            {/* {console.log(allLessonsCompleted,"all lessons Completed CONSOLLING")} */}
+    
             {examPresent && allLessonsCompleted && (
           <button className='w-full bg-darkBlue text-white p-2 border rounded-md font-semibold' onClick={()=> handleTakeExam()}>
             Take Exam

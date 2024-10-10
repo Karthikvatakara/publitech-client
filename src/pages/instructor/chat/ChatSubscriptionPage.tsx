@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useParams } from 'react-router-dom';
-import { useDispatch,useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../../redux/store";
 // import { storeObject } from "@/utils/localStorage";
-import { setLocalStorage } from "../../../utils/localStorage";
 import { loadStripe } from "@stripe/stripe-js";
 import LoadingPopUp from "../../../skeleton/LoadingPopUp";
 import axios from "axios";
@@ -15,7 +14,6 @@ import { config } from "../../../common/configurations";
 
 export const StudentChatSubscription: React.FC = () => {
     const { chatId } = useParams();
-    console.log(chatId)
 
 
   const cardVariants = {
@@ -66,12 +64,10 @@ export const StudentChatSubscription: React.FC = () => {
 
 //   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
   const handlePayment = async (price: number, plan: string, image: string) => {
     try {
-        console.log("aaaaaaa")
       if (user?._id && chatId) {
         setLoading(true);
         const stripe = await loadStripe(
@@ -89,7 +85,6 @@ export const StudentChatSubscription: React.FC = () => {
 
        const response = await axios.post(`${URL}/api/payment/create-subscription-checkout-session`,subDatas,config)
     
-        console.log("🚀 ~ handlePayment ~ response:", response)
         if(!response?.data?.success){
             toast.error("error ocuured")
         }
@@ -103,10 +98,10 @@ export const StudentChatSubscription: React.FC = () => {
       } else {
         toast.error("Missing user ID or chat ID");
       }
-    } catch (error: any) {
+    } catch (error) {
       setLoading(false);
       console.error("Subscription Payment error:", error);
-      toast.error(error.message);
+      toast.error((error as Error)?.message);
     }
   };
 

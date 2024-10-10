@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import InputWithIcon from '../../components/common/InputFieldWithTittle';
 import emptyImage from "../../assets/profiles/emptyUser.png"
 import { AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai';
@@ -24,7 +24,7 @@ function InstructorProfile() {
   };
 
   const handleSave = (updatedUser: UserEntity) => {
-    console.log(updatedUser, 'arrived after updation');
+    console.log("🚀 ~ handleSave ~ updatedUser:", updatedUser)
     setShowEditProfile(false)
     // Here you would typically dispatch an action to save the updated user data to the store
   };

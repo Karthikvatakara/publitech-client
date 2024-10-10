@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import Navbar from "../../components/landPage/Navbar";
 import AOS from "aos";
 import success from "../../assets/applyToTeach/success.png";

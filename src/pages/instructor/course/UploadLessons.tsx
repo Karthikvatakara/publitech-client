@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { CustomVideoFileInput } from '../../../components/common/filesUpload/CustomVideoFileInput';
 import CustomSinglePdfUpload from '../../../components/common/filesUpload/CustomSinglePdfUpload';
 import CustomSingleFileImage from '../../../components/common/filesUpload/CustomSingleFileImage';
-import { CourseEntity } from '../../../interface/courseEntity';
-import { setLocalStorage,getLocalStorage,removeLocalStorage } from '../../../utils/localStorage';
-import { useCallback } from 'react';
-import { useMemo } from 'react';
+// import { CourseEntity } from '../../../interface/courseEntity';
+import { getLocalStorage,removeLocalStorage } from '../../../utils/localStorage';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { getAllCourse, publishCourse } from '../../../redux/actions/course/courseActons';
@@ -26,7 +23,7 @@ const initialLesson = {
 };
 
 function UploadLessons() {
-  const [ courseDetails,setCourseDetails ] = useState<CourseEntity | null>(null)
+  // const [ courseDetails,setCourseDetails ] = useState<CourseEntity | null>(null)
   const dispatch:AppState = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state:RootState) => state.user)
@@ -37,9 +34,8 @@ function UploadLessons() {
   }
  
 
-  const handleSubmit = async(values:any, actions:any) => {
+  const handleSubmit = async(values:any) => {
     console.log(values,"values");
-    console.log(courseDetails,"courseDetails");
     const localStorageData = getData()
     
     const data = {

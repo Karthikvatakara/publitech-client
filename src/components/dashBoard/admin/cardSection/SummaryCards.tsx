@@ -1,7 +1,7 @@
 import RevenueCard from './RevenueCard';
 import StudentsCard from './StudentsCard';
 import InstructorCard from './InstructorCard';
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { config } from '../../../../common/configurations';
 import axios from 'axios'
 import { URL } from '../../../../common/api';

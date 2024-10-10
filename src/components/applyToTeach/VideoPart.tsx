@@ -1,4 +1,3 @@
-import React from 'react'
 import applyTeachVideo from "../../assets/applyToTeach/applyTeachvideo.png"
 
 function videoPart() {

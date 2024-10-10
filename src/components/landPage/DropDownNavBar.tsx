@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/actions/user/userActions';
 import { AppState } from '../../redux/store';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import emptyImage from "../../assets/profiles/emptyUser.png";
 import { UserEntity } from '../../interface/UserEntity';
 

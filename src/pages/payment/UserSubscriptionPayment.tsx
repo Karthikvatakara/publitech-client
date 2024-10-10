@@ -22,9 +22,6 @@ function UserSubscriptionPayment() {
   
   const getData = async() => {
     setLoading(true);
-    console.log("🚀 ~ SubscriptionPayments ~ selectedStatus:", selectedStatus);
-    console.log("🚀 ~ SubscriptionPayments ~ currentPage:", currentPage);
-    console.log(searchTerm,"aaaaaaaaaaaaaaaaaaaaa")
     const response = await axios.get(`${URL}/api/payment/admin/subscriptionPayments`,{
       ...config,
       params: {
@@ -34,7 +31,6 @@ function UserSubscriptionPayment() {
         search: searchTerm 
       }
     })
-    console.log("🚀 ~ getData ~ response:", response)
     setSubscriptionData(response?.data?.data)
     setTotalPages(response?.data?.totalPages)
     setLoading(false)
@@ -43,12 +39,10 @@ function UserSubscriptionPayment() {
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedStatus(event.target.value);
-    console.log(selectedStatus,"sssssssssss");
 }
 
 const handleSearchTerm = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value)
-    console.log(searchTerm,"aaaaaaaaaa")
 }
 const handlePageChange = ( page: number) => {
     setCurrentPage(page);
@@ -111,7 +105,7 @@ const handlePageChange = ( page: number) => {
           </thead>
           <tbody className='bg-white divide-y divide-gray-200'>
             {subscriptionData.map((payment) => (
-              <tr key={payment?._id} className='hover:bg-gray-50'>
+              <tr key={String(payment?._id)} className='hover:bg-gray-50'>
                 <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{payment?.participants[0]?.username}</td>
                 <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>{payment?.participants[1]?.username}</td>
                 <td className='px-6 py-4 whitespace-nowrap'>
@@ -128,7 +122,7 @@ const handlePageChange = ( page: number) => {
                 </span>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
-                  {payment?.amount}
+                {payment?.amount?.toString() ?? 'N/A'}
                 </td>
               </tr>
             ))}

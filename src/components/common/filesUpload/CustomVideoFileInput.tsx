@@ -1,6 +1,6 @@
 import { FC, useState, useRef, ChangeEvent, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVideo, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 import videoUpload from "../../../lib/utility/videoUpload";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -8,11 +8,13 @@ import ClipLoader from "react-spinners/ClipLoader";
 interface CustomVideoFileInputProps {
   onChange: (file: File | null | string) => void;
   initialValue?: string;
+  isRequired?: boolean;
 }
 
 export const CustomVideoFileInput: FC<CustomVideoFileInputProps> = ({
   onChange,
   initialValue,
+  isRequired = false, // Default to false if not provided
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -90,7 +92,7 @@ export const CustomVideoFileInput: FC<CustomVideoFileInputProps> = ({
     <div
       className={`lg:h-80 border-dashed border-2 p-8 rounded-lg text-center ${
         isDragging ? `bg-blue-100 border-blue-500` : "bg-gray-100 border-gray-200"
-      }`}
+      } ${isRequired ? "border-red-500" : ""}`} // Highlight if required
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

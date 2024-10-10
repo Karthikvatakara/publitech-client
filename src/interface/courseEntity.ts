@@ -1,6 +1,7 @@
-import { ObjectId, Types } from "mongoose";
+import { ObjectId } from "mongoose";
 
-interface Lesson {
+export interface LessonEntity {
+    _id?: string,
     title: string,
     description: string,
     thumbnail: string,
@@ -41,7 +42,7 @@ export interface CourseEntity {
     instructorRef: ObjectId,
     categoryRef: ObjectId,
     language?: string,
-    lessons: [Lesson],
+    lessons: [LessonEntity],
     trial: Trial,
     isPaid: boolean,
     createdAt?: Date;

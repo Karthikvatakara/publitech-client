@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react';
 import UserCoursePayment from '../payment/UserCoursePayment';
 import UserSubscriptionPayment from '../payment/UserSubscriptionPayment';

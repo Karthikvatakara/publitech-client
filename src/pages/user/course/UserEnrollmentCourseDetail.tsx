@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaBook, FaRegClock, FaVideo, FaTrophy, FaFileDownload, FaRunning, FaClock, FaPlay } from "react-icons/fa";
+import { FaBook, FaRegClock, FaVideo, FaTrophy, FaFileDownload, FaRunning, FaClock  } from "react-icons/fa";
 import { IoMdFlash } from "react-icons/io";
 import { RiArticleFill } from "react-icons/ri";
 import { GiLaptop } from "react-icons/gi";
@@ -9,12 +9,14 @@ import { AppState } from "../../../redux/store";
 import { getSingleCourse } from "../../../redux/actions/course/courseActons";
 import { useDispatch } from "react-redux";
 import { MdOutlineOndemandVideo } from "react-icons/md";
-
+import { CoursePopulated } from "../../../interface/coursePopulated";
+// import { LessonEntity } from "../../../interface/courseEntity";
+import { LessonEntity } from "../../../interface/coursePopulated";
 
 function UserEnrollmentCourseDetail() {
-  const [courseData, setCourseData] = useState<any | null>(null);
+  const [courseData, setCourseData] = useState<CoursePopulated | null>(null);
   const { courseId } = useParams<{ courseId: string }>();
-  const [openLesson, setOpenLesson] = useState(null);
+  const [openLesson, setOpenLesson] = useState<number | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppState>();
 
@@ -69,7 +71,7 @@ function UserEnrollmentCourseDetail() {
             <h3 className="font-bold text-xl mb-2">What You Will Learn</h3>
             <ul className="list-disc list-inside text-gray-700">
               {courseData?.whatWillLearn && courseData?.whatWillLearn?.length > 0 ? (
-                courseData?.whatWillLearn?.map((item: any, index: number) => (
+                courseData?.whatWillLearn?.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))
               ) : (
@@ -107,7 +109,7 @@ function UserEnrollmentCourseDetail() {
             </div>
           </div>
           <div className="space-y-4">
-            {courseData?.lessons?.map((lesson: any, index: number) => (
+            {courseData?.lessons?.map((lesson: LessonEntity, index: number) => (
               <div key={index} className="bg-white border rounded-lg overflow-hidden">
                 <div
                   className="flex justify-between items-center p-4 cursor-pointer"

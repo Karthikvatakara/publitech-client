@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import SideDrawer from '../../../components/chat/SideDrawer';
+import { useState, useEffect } from 'react';
 import MyChats from '../../../components/chat/MyChats';
 import Chatbox from '../../../components/chat/ChatBox';
-import { chatEntity } from '../../../interface/chatEntitty';
+import { getUserChatEntity } from '../../../interface/getUserChatEntity';
 
 function InstructorChat() {
-  const [selectedChat, setSelectedChat] = useState<chatEntity | null>(null);
+  const [selectedChat, setSelectedChat] = useState<getUserChatEntity | null>(null);
   const [isMobileView, setIsMobileView] = useState(false);
 
   useEffect(() => {

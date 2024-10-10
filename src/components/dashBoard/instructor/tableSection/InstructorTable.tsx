@@ -1,11 +1,12 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { URL } from '../../../../common/api';
 import { config } from '../../../../common/configurations';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { CourseWithEnrollment } from '../../../../interface/coursesWithEnrollment';
 
 function InstructorTable() {
-    const [courses, setCourses] = useState<any[] | null>([]);
+    const [courses, setCourses] = useState<CourseWithEnrollment[] | null>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -52,7 +53,7 @@ function InstructorTable() {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {Array.isArray(courses) && courses.length > 0 ? (
                             courses.map((course, index) => (
-                                <tr key={course?._id}>
+                                <tr key={course?.courseId as string}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {index + 1}
                                     </td>

@@ -1,18 +1,23 @@
 import { FaPlay, FaPaperclip, FaChevronDown, FaChevronUp, FaCheckCircle } from 'react-icons/fa';
 import { useState } from 'react';
+import { LessonEntity } from '../../../../interface/courseEntity';
+import { LessonProgress } from '../../../../interface/EnrollmentEntity';
 
-const LessonItem = ({ lesson, index, currentLesson, handleLessonClick, progress }) => {
+const LessonItem = ({ lesson, index, currentLesson, handleLessonClick, progress }:{lesson: LessonEntity, index: number, currentLesson: number,   handleLessonClick: (index: number) => void,
+  progress: LessonProgress | undefined}) => {
   // console.log("🚀 ~ LessonItem ~ progress:", progress)
   const [isExpanded, setIsExpanded] = useState(false);
   const words = lesson.description.split(' ');
   const isLongDescription = words.length > 50;
 
-  const toggleExpand = (e) => {
+  const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
 
-  const isCompleted = progress?.isCompleted || false;
+  const isCompleted = progress?.isCompleted ?? false;
+
+  // const isCompleted = progress?.isCompleted || false;
   // console.log("🚀 ~ LessonItem ~ isCompleted:", isCompleted)
 
   return (

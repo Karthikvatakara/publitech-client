@@ -1,4 +1,4 @@
-import React,{ useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { FaBookBookmark, FaUser, FaTrophy, FaStarAndCrescent } from "react-icons/fa6";
 import { CourseEntity } from '../../interface/courseEntity';
 import { useNavigate } from 'react-router-dom';
@@ -93,7 +93,7 @@ export default function CourseCardInstructor(course: CourseEntity) {
               View Course
             </button>
             <div className='flex items-center'>
-              <div className={`w-16 flex justify-center items-center h-5 text-white text-sm rounded-xl ${getStatusColor(course?.stage || 'unknown')} mr-2`} ><h1></h1>{getStatusText(course?.stage)}</div>
+              <div className={`w-16 flex justify-center items-center h-5 text-white text-sm rounded-xl ${getStatusColor(course?.stage || 'unknown')} mr-2`} ><h1></h1>{getStatusText(String(course?.stage))}</div>
               <div className='text-yellow-400'>
                 <FaStarAndCrescent />
               </div>

@@ -1,20 +1,20 @@
-import { ObjectId } from "mongoose";
-
-enum contents {
-    text = "text",
-    image = "image",
-    audio = "audio",
-    video = "video",
-    file = "file"
-}
+import { Types } from "mongoose";
 
 export interface messageEntity {
-    _id?:  string | ObjectId,
-    sender :  string | ObjectId,
-    content? : string,
-    chatId :  string  |ObjectId,
-    contentType? : contents,
-    recieverSeen : boolean,
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+  _id: Types.ObjectId; 
+  sender: Types.ObjectId | {
+    _id: Types.ObjectId;
+    name: string;  
+  };
+  content: string;
+  chatId: Types.ObjectId | {
+    _id: Types.ObjectId;
+    isGroupChat: boolean;
+    users: Types.ObjectId[]; 
+    groupName?: string;
+  };
+  contentType: 'text' | 'image' | 'audio' | 'video' | 'file';
+  recieverSeen: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

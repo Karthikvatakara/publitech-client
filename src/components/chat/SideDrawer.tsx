@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaSearch } from "react-icons/fa";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
 import axios from 'axios';
 import { URL } from '../../common/api';
 import { config } from '../../common/configurations';
@@ -9,7 +7,6 @@ import { UserEntity } from '../../interface/UserEntity';
 import emptyImage from "../../assets/profiles/emptyUser.png";
 
 function SideDrawer() {
-  const { user } = useSelector((state: RootState) => state.user)
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -125,7 +122,7 @@ function SideDrawer() {
               <p className="text-gray-500">Loading users...</p>
             ) : usersList.length > 0 ? (
               usersList.map((user) => (
-                <div key={user._id} className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
+                <div key={String(user?._id)} className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
                   <img 
                     src={typeof user?.profile?.avatar === "string" ? user?.profile?.avatar : emptyImage}
                     // alt={`${user.username}'s avatar`} 
