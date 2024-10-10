@@ -43,6 +43,16 @@ function QuestionForm({
     }
   }, [questionNumber]);
 
+  function renderErrorMessage(error: unknown): React.ReactNode {
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (typeof error === 'object' && error !== null && 'option' in error) {
+      return (error as FormikErrors<Option>).option;
+    }
+    return 'Invalid option';
+  }
+  
   const getInitialValues = (): Question => {
     if (savedQuestions.length > 0 && savedQuestions[questionNumber - 1]) {
       return savedQuestions[questionNumber - 1];
@@ -127,16 +137,12 @@ function QuestionForm({
                           : 'border-gray-300'
                       }`}
                     />
-                  {touched.options?.[index]?.option &&
-                    errors.options?.[index] && (
-                      <div className="text-red-500 text-sm mt-1">
-                      {typeof errors.options?.[index] === 'string'
-                        ? errors.options?.[index]
-                        : typeof errors.options?.[index] === 'object'
-                        ? (errors.options?.[index] as FormikErrors<Option>)?.option
-                        : 'Invalid option'}
-                    </div>
-                    )}
+                    {touched.options?.[index]?.option &&
+                      errors.options?.[index] && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {renderErrorMessage(errors.options?.[index])}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
