@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, FieldArray, FormikErrors, FormikTouched } from 'formik';
 import { examQuestionValidationSchema } from '../../../utils/validation/examQuestionsValidation';
 
@@ -43,12 +43,12 @@ function QuestionForm({
     }
   }, [questionNumber]);
 
-  function renderErrorMessage(error: unknown): React.ReactNode {
+  function renderErrorMessage(error: unknown): string {
     if (typeof error === 'string') {
       return error;
     }
     if (typeof error === 'object' && error !== null && 'option' in error) {
-      return (error as FormikErrors<Option>).option;
+      return (error as FormikErrors<Option>).option || 'Invalid option';
     }
     return 'Invalid option';
   }
@@ -140,7 +140,7 @@ function QuestionForm({
                     {touched.options?.[index]?.option &&
                       errors.options?.[index] && (
                         <div className="text-red-500 text-sm mt-1">
-                          {renderErrorMessage(errors.options?.[index])}
+                          {renderErrorMessage(errors.options?.[index]) as string}
                         </div>
                       )}
                   </div>
