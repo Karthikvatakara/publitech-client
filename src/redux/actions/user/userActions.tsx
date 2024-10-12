@@ -12,7 +12,9 @@ export const signupUser = createAsyncThunk(
         const response = await axios.post(`${URL}/api/auth/signup`, userData, config);
         if (response?.data?.success) {
             console.log(response?.data?.data,"it is in the signupuser actions")
-          return response.data; // This should indicate that OTP was sent, not that user was created
+            if(response?.data?.data) {
+                return response.data; 
+            }
         } else {
           return rejectWithValue(response.data.message);
         }
@@ -102,7 +104,6 @@ export const forgotPassword = createAsyncThunk("forgot/password",async(email:str
 
 // google auth
 export const googleLoginSignup = createAsyncThunk("user/googleAuth",async(userCredentials:IUserLogin, { rejectWithValue }) => {
-    
     try{
         console.log(userCredentials,"asdfasdfasfd");
         const response = await axios.post(`${URL}/api/auth/google`, { userCredentials } ,config)

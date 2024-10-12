@@ -79,10 +79,10 @@ const App: FC = () => {
     const initializeApp = async () => {
       if (!user) {
         await dispatch(getUserData());
+        console.log("initialised")
       }
       setIsInitialized(true);
     };
-
     initializeApp();
   }, [dispatch, user]);
 

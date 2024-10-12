@@ -5,7 +5,7 @@ metadata:
   labels:
     app: publitech-client
 data:
-  VITE_REACT_APP_BASE_URL: "http://bizprogym.shop"
+  VITE_REACT_APP_BASE_URL: "https://bizprogym.shop"
   VITE_REACT_APP_GOOGLE_ID: "816593476387-51filv8g64130omc5q012ikhgaijvgs1.apps.googleusercontent.com"
   VITE_REACT_APP_PRESET_KEY: "images_preset"
   VITE_REACT_APP_VIDEO_PRESET_KEY: "videos_preset"

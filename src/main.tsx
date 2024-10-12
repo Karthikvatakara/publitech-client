@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ChakraProvider>
-      <GoogleOAuthProvider clientId="816593476387-51filv8g64130omc5q012ikhgaijvgs1.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={`${import.meta.env.VITE_REACT_APP_GOOGLE_ID}`}>
       <Toaster position="top-center"/>
       <SocketProvider>
       <App />

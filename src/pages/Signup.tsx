@@ -82,7 +82,8 @@ const Signup: React.FC = () => {
       console.log(restValues);
       
       const result =  await dispatch(signupUser(restValues))
-      console.log(result, "formData is by onsubmit");
+      // console.log(result, "formData is by onsubmit");
+      // const response = await axios.post(`${URL}/api/auth/signup`, restValues, config)
       if (result.meta.requestStatus === "fulfilled") {
         toast.success("OTP sent successfully");
         setIsOtp(true);
