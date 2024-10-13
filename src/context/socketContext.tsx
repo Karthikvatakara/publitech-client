@@ -3,7 +3,6 @@ import io, { Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
-
 const SOCKET_URL = import.meta.env.VITE_REACT_APP_CHAT_URL;
 
 interface SocketContextType {
@@ -35,14 +34,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     useEffect(() => {
         if ((user?.role === "instructor" || user?.role === "student" || user?.role === "admin") && SOCKET_URL) {
             const newSocket = io(SOCKET_URL, {
+                path: "/socket.io/",
                 query: {
                     userId: user._id,
                 },
+                transports: ['websocket']
             });
             setSocket(newSocket);
 
             newSocket.on("getOnlineUsers", (users: string[]) => {
-                console.log(users,"socker connection")
+                console.log(users, "socket connection")
                 setOnlineUsers(users);
             });
 
@@ -62,7 +63,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 console.error("Connection error:", error);
             });
 
-            newSocket.on("block-user",() => {
+            newSocket.on("block-user", () => {
                 console.log("user blocked")
             });
 
@@ -75,7 +76,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 newSocket.off("message received");
                 newSocket.off("connect");
                 newSocket.off("block-user");
-                // newSocket.off("disconnect");
+                newSocket.off("disconnect");
                 newSocket.off("connect_error");
                 newSocket.off("error");
                 newSocket.close();
