@@ -132,7 +132,7 @@ function OtpComponent({ userData }: { userData: TempData }) {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         
-        setLoading(false);
+        setLoading(true);
 
         event.preventDefault();
         const joinedOtp = otp1 + otp2 + otp3 + otp4;
@@ -148,13 +148,16 @@ function OtpComponent({ userData }: { userData: TempData }) {
         try {
             const res = await dispatch(signupUser(userData));
             if (res.payload?.success) {
+                setLoading(false);
                 toast.success("Signup successful");
                 navigate('/');
             }else {
+                setLoading(false);
                 console.log(res.payload);
                 toast.error(res.payload)
             }
         } catch (error: any) {
+            setLoading(false);
             toast.error(error);
         } finally {
             setLoading(false);

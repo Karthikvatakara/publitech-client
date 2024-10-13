@@ -15,17 +15,17 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
             // signupUser
-            .addCase(signupUser.pending,(state) => {
-                state.loading = true;
-            })
+            // .addCase(signupUser.pending,(state) => {
+            //     state.loading = true;
+            // })
             .addCase(signupUser.fulfilled,(state, { payload }) => {
-                state.loading = false;
+                // state.loading = false;
                 if (payload && payload.data) {
                     state.user = payload.data;
                 } 
                 state.error = null;
             }).addCase(signupUser.rejected,(state, { payload }) => {
-                state.loading = false,
+                // state.loading = false,
                 state.user = null,
                 state.error = payload
             })

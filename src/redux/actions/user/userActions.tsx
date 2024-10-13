@@ -10,6 +10,7 @@ export const signupUser = createAsyncThunk(
     async (userData: any, { rejectWithValue }) => {
       try {
         const response = await axios.post(`${URL}/api/auth/signup`, userData, config);
+        console.log("🚀 ~ response:", response)
         if (response?.data?.success) {
             console.log(response?.data?.data,"it is in the signupuser actions")
             if(response?.data?.data) {

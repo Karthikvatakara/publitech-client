@@ -59,14 +59,14 @@ const Signup: React.FC = () => {
   const [renderKey, setRenderKey] = useState<number>(0);
 
 
-  useEffect(() => {
-    console.log("User:", user, "Error:", error, "Loading:", loading);
-    if (user && !error && !loading) {
-      setIsOtp(true);
-      setTempData(user);
-      setRenderKey(prevKey => prevKey + 1);
-    }
-  }, [user, error, loading]);
+  // useEffect(() => {
+  //   console.log("User:", user, "Error:", error, "Loading:", loading);
+  //   if (user && !error && !loading) {
+  //     setIsOtp(true);
+  //     setTempData(user);
+  //     setRenderKey(prevKey => prevKey + 1);
+  //   }
+  // }, [user, error, loading]);
 
   const initialValues: SignupFormValues = {
     username: '',
