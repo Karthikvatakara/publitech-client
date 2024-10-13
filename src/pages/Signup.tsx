@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import signupRectangle from "../assets/signuprectangle.png";
 import signuplaptop from "../assets/signuplaptop.png";
 import publiTech from "../assets/publitech.png";
@@ -6,8 +6,8 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import InputField from '../components/common/InputField';
 import PasswordInputField from '../components/common/PasswordInputField';
-import { useDispatch,useSelector } from 'react-redux';
-import { AppState,RootState } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import { AppState } from '../redux/store';
 import { signupUser } from '../redux/actions/user/userActions';
 import toast from 'react-hot-toast'
 import OtpComponent from '../components/otp/OtpComponent';
@@ -52,7 +52,7 @@ const signupValidationSchema = Yup.object().shape({
 
 
 const Signup: React.FC = () => {
-  const { user, loading, error } = useSelector((state: RootState) => state.user);
+  // const { user, loading, error } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppState>();
   const [isOtp, setIsOtp] = useState<boolean>(false);
   const [tempData,setTempData] = useState<TempData>(temporaryData)
