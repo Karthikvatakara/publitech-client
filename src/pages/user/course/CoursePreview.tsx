@@ -165,7 +165,7 @@ function CoursePreview() {
 
   const getExamResult = async() => {
     if(examDetails && examDetails?._id) {
-      const response = await axios.get(`${URL}/api/course/isResultExist/${examDetails?._id}`,config);
+      const response = await axios.get(`${URL}/api/course/isResultExist/${examDetails?._id}/${userId}`,config);
       if (response?.data?.success){
         if(response?.data?.data?.isPassed){
           setExamPassed(true)

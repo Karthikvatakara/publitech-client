@@ -22,7 +22,7 @@ function SummaryCards() {
           const [ courseResponse, studentResponse, revenueResopnse ] = await Promise.all([
             axios.get(`${URL}/api/course/instructor/totalCourses`,config),
             axios.get(`${URL}/api/course/instructor/noOfStudentsPurchased`,config),
-            axios.get(`${URL}/api/payment//instructor/totalPayment`,config)
+            axios.get(`${URL}/api/payment/instructor/totalPayment`,config)
           ]);
     
           setCardData({
