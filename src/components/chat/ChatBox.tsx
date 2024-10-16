@@ -22,6 +22,7 @@ import { UserEntity } from '../../interface/UserEntity';
 interface ChatboxProps {
   selectedChat: getUserChatEntity | null;
   onBackClick?: () => void;
+  onNewMessage?: () => void;
 }
 
 const Message: React.FC<{ message: any; isCurrentUser: boolean }> = ({ message, isCurrentUser }) => (
@@ -43,7 +44,7 @@ const Message: React.FC<{ message: any; isCurrentUser: boolean }> = ({ message, 
   </div>
 );
 
-const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
+const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick, onNewMessage  }) => {
   const [messages, setMessages] = useState<messageEntity[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -248,6 +249,9 @@ const Chatbox: React.FC<ChatboxProps> = ({ selectedChat, onBackClick }) => {
         socket.emit("new message", { ...data, chatId: selectedChat });
         setNewMessage('');
         scrollToBottom();
+        if (onNewMessage) {
+          onNewMessage();
+        }
       } catch (error) {
         console.error("Error sending message:", error);
         alert("Failed to send message. Please try again.");

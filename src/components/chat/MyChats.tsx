@@ -14,9 +14,10 @@ import { getUserChatEntity } from '../../interface/getUserChatEntity';
 interface MyChatsProps {
   selectedChat: getUserChatEntity | null,
   onChatSelect: (chat: getUserChatEntity | null) => void;
+  lastMessageTime: number;
 }
 
-const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
+const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect, lastMessageTime }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useSelector((state: RootState) => state.user);
   const [chatList, setChatList] = useState<any[]>([]);
@@ -26,7 +27,7 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [lastMessageTime]);
 
   useEffect(() => {
     const filtered = chatList.filter(chat => 
@@ -42,8 +43,15 @@ const MyChats: React.FC<MyChatsProps> = ({ selectedChat, onChatSelect }) => {
     try {
       setLoading(true);
       const response = await axios.get(`${URL}/api/chat/chats`, config);
-      const chatData = response.data?.data as getUserChatEntity[];  // Assert type here
-      setChatList(chatData);
+      const chatData = response.data?.data as any[];  
+   
+
+      const sortedChats = chatData.sort((a, b) => {
+        const timeA = a.latestMessage ? new Date(a?.latestMessage?.createdAt).getTime() : 0;
+        const timeB = b.latestMessage ? new Date(b?.latestMessage.createdAt).getTime() : 0;
+        return timeB - timeA;
+      });
+      setChatList(sortedChats);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching chats:", error);
