@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import { useCallback } from 'react';
 import fourthGrid from "../../assets/grids/fourth.png";
 import LandPageStudent from "../../assets/landPagestudent.png";
 import Particles from 'react-tsparticles'
@@ -20,7 +20,7 @@ function Banner() {
   }, []);
 
   return (
-    <div className="relative bg-darkBlue">
+    <div className="relative bg-darkBlue min-h-screen">
       <Particles
         id="tsparticles"
         init={particlesInit}
@@ -94,22 +94,27 @@ function Banner() {
           },
           detectRetina: true,
         }}
-        className='particles' />
-      <div className='lg:grid lg:grid-cols-2 flex flex-col-reverse'>
-        <div className='col-span-1 relative'>
-          <div className='absolute'>
-            <img src={fourthGrid} alt="Grid" className='mt-2 filter grayscale blur-2xl contrast-200' />
+        className='absolute inset-0' />
+      <div className='container mx-auto px-4 py-8 lg:py-16'>
+        <div className='flex flex-col-reverse lg:flex-row items-center justify-between'>
+          <div className='w-1/2 lg:w-1/2 relative '>
+            <div className='absolute inset-0'>
+              <img src={fourthGrid} alt="Grid" className='md:max-w-2xl h-w-2xl object-cover filter grayscale blur-3xl contrast-300' />
+            </div>
+            <div className='md:ps-10 relative z-20 text-center lg:text-left'>
+              <h2 className='text-white font-semibold text-xl mb-2'>Learn without Limits</h2>
+              <h1 className='text-white font-bold text-4xl sm:text-5xl lg:text-6xl leading-tight'>
+                crack your Goal <br />
+                with india's top <br />
+                educators
+              </h1>
+            </div>
           </div>
-          <div className='flex flex-col mt-36 gap-2 ms-24'>
-            <h1 className='text-white font-semibold text-xl'>Learn without Limits</h1>
-            <h1 className='text-white font-bold text-6xl'>crack your Goal </h1>
-            <h1 className='text-white font-bold text-6xl'>with india's top</h1>
-            <h1 className='text-white font-bold text-6xl'>educators</h1>
+          <div className='w-full lg:w-1/2 relative'>
+            <img src={fourthGrid} alt="Grid" className='absolute inset-0 w-full h-full object-cover filter grayscale blur-2xl contrast-200' />
+            {/* <img src={LandPageStudent} alt="Student" className='relative z-10 w-full max-w-md mx-auto' /> */}
+            <img src={LandPageStudent} alt="Student" className='relative z-10 md:max-w-lg lg:max-w-xl mx-auto' />
           </div>
-        </div>
-        <div className='col-span-1 relative'>
-          <img src={fourthGrid} alt="Grid" className='absolute mt-[280px] filter grayscale blur-2xl contrast-200' />
-          <img src={LandPageStudent} alt="Student" className='w-[550px]' />
         </div>
       </div>
     </div>

@@ -52,7 +52,7 @@ function Navbar() {
                                 <Link to="/" className="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Home</Link>
                                 <Link to="/courses" className="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Courses</Link>
                                 <Link to="/apply" className="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Teach with us</Link>
-                                <Link to="/about" className="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">About Us</Link>
+                                {/* <Link to="/about" className="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">About Us</Link> */}
                             </div>
                         </div>
                     </div>

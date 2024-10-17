@@ -1,7 +1,7 @@
 import Navbar from '../../components/landPage/Navbar'
 import Banner from '../../components/landPage/Banner'
 import HeroSection from '../../components/landPage/HeroSection'
-import CourseTittle from "../../components/landPage/CourseTittle"
+// import CourseTittle from "../../components/landPage/CourseTittle"
 import InstructorGroup from '../../components/landPage/InstructorGroup'
 import Footer1 from '../../components/landPage/Footer1'
 
@@ -16,7 +16,7 @@ function LandPage() {
             <Banner/>
         </div>
             <HeroSection/>
-            <CourseTittle/>
+            {/* <CourseTittle/> */}
             {/* <CardGroup/> */}
             <InstructorGroup/>
             <Footer1/>
