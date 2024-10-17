@@ -6,6 +6,7 @@ import { getUserChatEntity } from '../../../interface/getUserChatEntity';
 function InstructorChat() {
   const [selectedChat, setSelectedChat] = useState<getUserChatEntity | null>(null);
   const [isMobileView, setIsMobileView] = useState(false);
+  
   const [lastMessageTime, setLastMessageTime] = useState<number>(0);
 
 
