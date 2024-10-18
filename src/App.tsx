@@ -111,7 +111,7 @@ const App: FC = () => {
     if (!isInitialized || loading) {
       return <LoadingSpinner />;
     }
-
+    console.log(user,"to identify user")
     if (!user) {
       return <Navigate to="/login" replace />;
     }

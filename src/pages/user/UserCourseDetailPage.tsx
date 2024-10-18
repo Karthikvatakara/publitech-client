@@ -104,6 +104,11 @@ function UserCourseDetailPage() {
         };
         const response = await axios.post(`${URL}/api/payment/create-checkout-session`,body,config)
 
+        console.log("🚀 ~ handleEnrollment ~ response:222222222", response)
+        if(!response?.data?.success && response?.data?.status == 409) {
+          toast.error("you are already purchased the course")
+        }
+
         if(stripe && response?.data.id){
           stripe.redirectToCheckout({
             sessionId: response?.data?.id
