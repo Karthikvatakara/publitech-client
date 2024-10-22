@@ -7,7 +7,7 @@ import CustomSingleFileImage from '../../../components/common/filesUpload/Custom
 import { getLocalStorage,removeLocalStorage } from '../../../utils/localStorage';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { getAllCourse, publishCourse } from '../../../redux/actions/course/courseActons';
+import { getAllInstructorCourse, publishCourse } from '../../../redux/actions/course/courseActons';
 import { AppState } from '../../../redux/store';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
@@ -47,13 +47,16 @@ function UploadLessons() {
     console.log(data,"send data");
     const res = await dispatch(publishCourse(data))
     if (res.meta.requestStatus === "fulfilled"){
+      console.log("reached in the fulfilled section");
+      
       removeLocalStorage("tempCourseData");
-      dispatch(getAllCourse());
-      console.log("🚀 ~ handleSubmit ~ res:", res)
+   
+      dispatch(getAllInstructorCourse({ page: 1, limit: 6, search: '', stage: '' })).unwrap();
+
       toast.success("course updated succesfully")
-      setTimeout(() => {
-        navigate("/instructor/course");
-      }, 0);    }
+ 
+      navigate("/instructor/course")
+    }
 
   };
 

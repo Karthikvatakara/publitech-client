@@ -2,12 +2,15 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import io, { Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { logout } from "../redux/actions/user/userActions";
+import { useDispatch } from "react-redux";
+import { AppState } from "../redux/store";
 
 const SOCKET_URL = import.meta.env.VITE_REACT_APP_CHAT_URL;
 
 interface SocketContextType {
     socket: Socket | null;
-    messages: any[]; 
+    messages: any[];
     onlineUsers: string[];
 }
 
@@ -27,9 +30,15 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const { user } = useSelector((state: RootState) => state.user);
+    const dispatch = useDispatch<AppState>();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const [messages, setMessages] = useState<any[]>([]);
+
+    const handleLogout = () => {
+        // console.log("222222222222222222222222222ahandle logout");
+        dispatch(logout());
+    };
 
     useEffect(() => {
         if ((user?.role === "instructor" || user?.role === "student" || user?.role === "admin") && SOCKET_URL) {
@@ -63,8 +72,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 console.error("Connection error:", error);
             });
 
-            newSocket.on("block-user", () => {
-                console.log("user blocked")
+            newSocket.on("user-blocked", () => {
+                console.log("user blocked");
+                handleLogout();
             });
 
             newSocket.on("error", (error) => {

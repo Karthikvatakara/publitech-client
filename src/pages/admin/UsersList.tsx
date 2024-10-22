@@ -6,7 +6,8 @@ import { UserEntity } from '../../interface/UserEntity';
 import Pagination from '../../components/common/Pagination';
 import ConfirmationModal from '../../components/common/modals/ConfirmationModal';
 import { Player } from '@lottiefiles/react-lottie-player';
-// import { useSocketContext } from '../../context/socketContext';
+import { useSocketContext } from '../../context/socketContext';
+
 
 function UsersList() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -17,7 +18,7 @@ function UsersList() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [ showModal, setShowModal ] = useState<boolean>(false);
   const [ selectedUser, setSelectedUser ] = useState<UserEntity | null>(null);
-  // const { socket } = useSocketContext();
+  const { socket } = useSocketContext();
 
   useEffect(() => {
     getUserData();
@@ -35,7 +36,7 @@ function UsersList() {
           search: searchTerm
         }
       });
-      console.log("🚀 ~ getUserData ~ response:", response)
+      // console.log("🚀 ~ getUserData ~ response:", response)
       setUserData(response?.data?.data);
       setTotalPages(response?.data?.totalPages);
     } catch (error) {
@@ -71,9 +72,8 @@ function UsersList() {
 
   const changeUserStatus = async(user:UserEntity) => {
   // setLoading(true)
-  console.log("🚀 ~ changeUserStatus ~ user:", user)
   const response = await axios.post(`${URL}/api/user/admin/students/status/${user._id}`,config)
-  console.log("🚀 ~ changeUserStatus ~ response:", response);
+  // console.log("🚀 ~ changeUserStatus ~ response:", response);
   setUserData((prevData) => 
     prevData 
       ? prevData.map((userData) => 
@@ -84,15 +84,14 @@ function UsersList() {
       : prevData 
   );
   if(response?.data?.data?.isBlocked) {
-    
-    // if(socket && response?.data?.data?.isBlocked){
-    //   socket.emit('block-user',{ userId: user?._id});
-    //   console.log(`Emitted block-user event for user ${user._id}`);
-    // }else{
-    //   console.log('socket is not available')
-    // }
+    if(socket) {
+      socket.emit("block-user",{userId: user?._id});
+      // console.log(`emitted block user event for the user ${user._id}`);
+    }else{
+      console.log("socket is not availabele");
+    }
   }
-  // setLoading(false)
+  setLoading(false)
   setShowModal(false)
   }
 
