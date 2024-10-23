@@ -8,6 +8,7 @@ import InstructorDetailsModal from '../../components/common/instructorDetailsMod
 import Pagination from '../../components/common/Pagination';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { UserEntity } from '../../interface/UserEntity';
+import { useSocketContext } from '../../context/socketContext';
 
 function AdminInstructors() {
   const [instructorData, setInstructorData] = useState<UserEntity[]>([])
@@ -21,6 +22,7 @@ function AdminInstructors() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { socket } = useSocketContext();
 
   useEffect(() => {
     getInstructorData()
@@ -53,8 +55,9 @@ function AdminInstructors() {
       if (selectedInstructor) {
         const id = selectedInstructor;
         setLoading(true);
-        await axios.post(`${URL}/api/user/admin/instructor/status`, { id, action }, config);
+        const response = await axios.post(`${URL}/api/user/admin/instructor/status`, { id, action }, config);
 
+        console.log("🚀 ~ instructorStatusChange ~ response:", response)
         setInstructorData((prevInstructor) => 
         prevInstructor.map((instructor) => 
           instructor._id === selectedInstructor ?(
@@ -63,7 +66,13 @@ function AdminInstructors() {
             instructor
           )
         ));
-
+        if(response?.data?.data?.isBlocked) {
+          if(socket) {
+            socket.emit("block-user",{ userId: id });
+          }else{
+            console.log("socket is not available")
+          }
+        }
         setLoading(false)
         setShowModal(false);
       }
